@@ -13,10 +13,10 @@ Functionality:
 
 
 How to compile?
- $ make SVGParser
+ - $ make SVGParser
  
 How to run?
- $ ./SVGParser
+ - $ ./SVGParser
  
 Things to keep in mind before compiling and running:
 - the libxml2 library must be installed
