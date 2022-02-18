@@ -27,3 +27,6 @@ Things to keep in mind before compiling and running:
 Example
 
 ![gitSVG](https://user-images.githubusercontent.com/95400232/154628565-f24dc59f-42e4-480b-a4e8-345d77287340.png)
+
+
+![output git](https://user-images.githubusercontent.com/95400232/154628663-2691a472-8548-4303-8bb2-92601c04b105.png)
