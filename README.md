@@ -1,2 +1,3 @@
 # SVG_Parser
-A program that uses libxml2 library to parse SVG files and converts into well-formatted humanly readable strings.
+This project implements a basic SVG parser useing libxml2 library, SVG files are parsed and converted into well-formatted humanly readable strings.
+
