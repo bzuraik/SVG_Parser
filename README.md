@@ -26,6 +26,7 @@ Things to keep in mind before compiling and running:
 
 Example
 - printing the whole svg image
+
 ![gitSVG](https://user-images.githubusercontent.com/95400232/154628565-f24dc59f-42e4-480b-a4e8-345d77287340.png)
 
 
