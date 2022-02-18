@@ -12,5 +12,18 @@ Functionality:
 - Search through the image (SVG File) to find if the image contains specific elements.
 
 
+How to compile?
+ $ make SVGParser
+ 
+How to run?
+ $ ./SVGParser
+ 
+Things to keep in mind before compiling and running:
+- the libxml2 library must be installed
+  - $ sudo apt-get install libxml2.
+- the svg file must exist in the bin directory or else it will give a parsing error
+  - I have added a test.svg file already there.
 
+Example
 
+![gitSVG](https://user-images.githubusercontent.com/95400232/154628565-f24dc59f-42e4-480b-a4e8-345d77287340.png)
