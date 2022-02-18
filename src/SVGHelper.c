@@ -14,11 +14,6 @@
 #include "SVGHelper.h"
 char floats[50];
 char units[10];
-<<<<<<< HEAD
-=======
-
-//function that parses an attribute that has a unit with it.
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 int storeUnits(char * cont)
 {
     int j = 0;
@@ -42,13 +37,9 @@ int storeUnits(char * cont)
 
         units[strlen(units)] = '\0';
 
-<<<<<<< HEAD
     return unitExist;  
 }
 
-=======
-// Function that mallocates a struct of attribute
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 Attribute * createAttribute(char* size)
 {
 
@@ -380,7 +371,6 @@ void findGroup(xmlNode * a_node, SVG* svg, Group *group)
             }
             else if(strcmp((char*)cur_node->name, "g") == 0)
             {
-<<<<<<< HEAD
                 printf("group\n");
                 Group* group1 = (Group*)malloc(sizeof(Group));
                 group1->groups = initializeList(&groupToString, &deleteGroup, &compareGroups);
@@ -397,36 +387,6 @@ void findGroup(xmlNode * a_node, SVG* svg, Group *group)
                 
             }  
         }
-=======
-                
-                Group* group1 = (Group*)malloc(sizeof(Group));
-                group1->groups = initializeList(&groupToString, &deleteGroup, &compareGroups);
-                group1->rectangles = initializeList(&rectangleToString, &deleteRectangle, &compareRectangles);
-                group1->circles = initializeList(&circleToString, &deleteCircle, &compareCircles);
-                group1->paths = initializeList(&pathToString, &deletePath, &comparePaths);
-                group1->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &compareAttributes);
-                findGroup(cur_node->children, svg, group1);
-
-                insertBack(group->groups, (void*)group1); 
-                cur_node = cur_node->next;
-                
-                
-            } 
-
-            
-        }
-
-         xmlAttr *attr;
-         for (attr = cur_node->properties; attr != NULL; attr = attr->next)
-         {
-            xmlNode *value = attr->children;
-             char *attrName = (char *)attr->name;
-             char *cont = (char *)(value->content);
-            
-             printf("\tttribute name: %s, attribute value = %s\n", attrName, cont); 
-                
-         }
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
         findGroup(cur_node->children, svg, group);
     }
 }
@@ -435,13 +395,8 @@ SVG* print_element_names(xmlNode * a_node, SVG* svg)
     xmlNode *cur_node = NULL;
     for (cur_node = a_node; cur_node != NULL; cur_node = cur_node->next) {
         if (cur_node->type == XML_ELEMENT_NODE) {
-<<<<<<< HEAD
 
             // printf("Group Node type: Element, \nname: %s\n", cur_node->name);
-=======
-            printf("Group Node type: Element, \nname: %s\n", cur_node->name);
-            
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 
             if(strcmp((char*)cur_node->name, "title") == 0)
             {
@@ -557,19 +512,9 @@ SVG* print_element_names(xmlNode * a_node, SVG* svg)
                 strcpy(structAtt->value, cont);
                 insertBack(svg->otherAttributes, (void*)structAtt);
                 
-<<<<<<< HEAD
             } 
             // printf("\tattribute name: %s, attribute value = %s\n", attrName, cont);  
         }  
-=======
-            }
-            
-            
-            printf("\tattribute name: %s, attribute value = %s\n", attrName, cont);
-            // insertBack(svg->rectangles, (void*)rect);    
-        }
-        
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
         print_element_names(cur_node->children, svg);
     }
     return svg;

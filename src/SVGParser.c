@@ -65,10 +65,7 @@ SVG* createSVG(const char* fileName){
 // This function returns a humanly readable string representation of the entire vector image object
 char* SVGToString(const SVG* img)
 {
-<<<<<<< HEAD
 	
-=======
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
     char *str = toString(img->otherAttributes);
 	
 	char *str2 = toString(img->rectangles);
@@ -82,17 +79,8 @@ char* SVGToString(const SVG* img)
 	int len;
 	len = strlen(str)+strlen(str2) + strlen(str3)+ strlen(str4) + strlen(str5) +24;
 	char *tmpStr = (char*)malloc(sizeof(char)*len);
-<<<<<<< HEAD
-=======
-	
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	
 	sprintf(tmpStr, "%s %s %s %s %s",str , str2, str3, str4, str5);
-<<<<<<< HEAD
-
-=======
-	
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	free(str5);
 	free(str4);
 	free(str3);
@@ -104,28 +92,16 @@ char* SVGToString(const SVG* img)
 
 void deleteSVG(SVG* img)
 {
-<<<<<<< HEAD
 	
 	if (img == NULL){
 		return;
 	}
 	
-=======
-	if (img == NULL)
-	{
-		return;
-	}
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	freeList(img->otherAttributes);
 	freeList(img->rectangles);
 	freeList(img->circles);
 	freeList(img->paths);
 	freeList(img->groups);
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	free(img);
 }
 
@@ -162,10 +138,6 @@ char* attributeToString(void* data)
 	
 	len = strlen(tmpName->name)+strlen(tmpName->value)+24;
 	tmpStr = (char*)malloc(sizeof(char)*len);
-<<<<<<< HEAD
-=======
-	
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 
 	sprintf(tmpStr, "Name = %s Value = %s\n",tmpName->name , tmpName->value);
 	return tmpStr;
@@ -203,41 +175,21 @@ char* groupToString(void* data)
 	}
 	
 	tmpName = (Group*)data;
-<<<<<<< HEAD
-
-=======
-	
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	char *str1 = toString(tmpName->otherAttributes);
 	char *str2 = toString(tmpName->circles);
 	char *str3 = toString(tmpName->rectangles);
 	char *str4 = toString(tmpName->paths);
 	char *str5 = toString(tmpName->groups);
-<<<<<<< HEAD
-
-=======
-	
-	
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	int len = strlen(str2)+strlen(str4) +strlen(str3) + strlen(str1)+ strlen(str5)+24;
 	tmpStr = (char*)malloc(sizeof(char)*len);
 
 	sprintf(tmpStr, "\nGroup: %s \t%s %s %s %s",str1, str2, str4, str3, str5);
-<<<<<<< HEAD
 	
-=======
-
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	free(str1);
 	free(str2);
 	free(str3);
 	free(str4);
 	free(str5);
-<<<<<<< HEAD
-=======
-	
-
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	
 	return tmpStr;    
 }
@@ -272,13 +224,9 @@ char* rectangleToString(void* data)
 	tmpName = (Rectangle*)data;
 		
 	int len = snprintf(NULL, 0, "%f %f %f %f", tmpName->x, tmpName->y, tmpName->width, tmpName->height);
-<<<<<<< HEAD
 	
 	char *str3 = toString(tmpName->otherAttributes);
 	
-=======
-	char *str3 = toString(tmpName->otherAttributes);
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	tmpStr = malloc(sizeof(str3) * len + 24);
 
 	sprintf(tmpStr, "\nRect\nx = %f y = %f Widtth = %f = Height = %f units =%s\n", tmpName->x, tmpName->y, tmpName->width, tmpName->height, tmpName->units);
@@ -317,18 +265,11 @@ char* circleToString(void* data)
 	}
 	
 	tmpName = (Circle*)data;
-<<<<<<< HEAD
 			
-=======
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	int len = snprintf(NULL, 0, "%f %f %f", tmpName->cx, tmpName->cy, tmpName->r);
 	char *str3 = toString(tmpName->otherAttributes);
 	
 	tmpStr = malloc(sizeof(str3) * len + 24);
-<<<<<<< HEAD
-
-=======
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	sprintf(tmpStr, "\nCirc\ncx = %f cy = %f r = %f units =%s", tmpName->cx, tmpName->cy, tmpName->r, tmpName->units);
 	strcat(tmpStr, str3);
 
@@ -384,10 +325,6 @@ int comparePaths(const void *first, const void *second)
     return 0;
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 void deleteRectangleList(void* data)
 {
 
@@ -456,11 +393,6 @@ Rectangle * getGroupRect(Group *group)
 {
 
 	ListIterator iter = createIterator(group->rectangles);
-<<<<<<< HEAD
-
-=======
-	
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 	void* elem;
 	while((elem = nextElement(&iter)) != NULL){
 		Rectangle* tmpName = (Rectangle*)elem;
@@ -528,10 +460,6 @@ List* getGroups(const SVG* img)
 	while((elem = nextElement(&iter)) != NULL){
 		Group* tmpName = (Group*)elem;
 		insertBack(list, tmpName);
-<<<<<<< HEAD
-=======
-		
->>>>>>> f366c902e6bfeb6fe195b1c198c16719d5c4dab6
 		
 		
 	}
