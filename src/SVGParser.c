@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
+#include <unistd.h>
 #include <math.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -13,18 +14,868 @@
 #include "SVGParser.h"
 #include "SVGHelper.h"
 
+void docGroup(Group *tmpName, xmlNodePtr node)
+{
+			xmlNodePtr node1;
+			// ListIterator iter = createIterator(tmpName->groups);
+			if(tmpName->rectangles != NULL)
+			{
+				ListIterator iter3 = createIterator(tmpName->rectangles);
+				void* elem2;
+				while((elem2 = nextElement(&iter3)) != NULL)
+				{
+					Rectangle* tmpName = (Rectangle*)elem2;
+					char x[20];
+					sprintf(x, "%f", tmpName->x);
+
+					char y[20];
+					sprintf(y, "%f", tmpName->y);
+
+					char H[20];
+					sprintf(H, "%f", tmpName->height);
+
+					char W[20];
+					sprintf(W, "%f", tmpName->width);
+					
+					node1 =
+					xmlNewChild(node, NULL, BAD_CAST "rect",NULL);
+					xmlNewProp(node1, BAD_CAST "x", BAD_CAST x);
+					xmlNewProp(node1, BAD_CAST "y", BAD_CAST y);
+					xmlNewProp(node1, BAD_CAST "width", BAD_CAST W);
+					xmlNewProp(node1, BAD_CAST "height", BAD_CAST H);
+
+					if(tmpName->otherAttributes != NULL)
+					{
+						ListIterator iter2 = createIterator(tmpName->otherAttributes);
+						void* elem;
+						while((elem = nextElement(&iter2)) != NULL)
+						{
+							Attribute* tmpName = (Attribute*)elem;
+							xmlNewProp(node1, BAD_CAST tmpName->name, BAD_CAST tmpName->value);
+						}
+					}
+
+				}
+			}		
+
+			if(tmpName->circles != NULL)
+			{
+				ListIterator iter4 = createIterator(tmpName->circles);
+				void* elem3;
+				while((elem3 = nextElement(&iter4)) != NULL)
+				{
+					Circle* tmpName = (Circle*)elem3;
+					char cx[20];
+					sprintf(cx, "%f", tmpName->cx);
+
+					char cy[20];
+					sprintf(cy, "%f", tmpName->cy);
+
+					char r[20];
+					sprintf(r, "%f", tmpName->r);
+
+					node1 =
+					xmlNewChild(node, NULL, BAD_CAST "circle",NULL);
+					xmlNewProp(node1, BAD_CAST "cx", BAD_CAST cx);
+					xmlNewProp(node1, BAD_CAST "cy", BAD_CAST cy);
+					xmlNewProp(node1, BAD_CAST "r", BAD_CAST r);
+
+					if(tmpName->otherAttributes != NULL)
+					{
+						ListIterator iter2 = createIterator(tmpName->otherAttributes);
+						void* elem;
+						while((elem = nextElement(&iter2)) != NULL)
+						{
+							Attribute* tmpName = (Attribute*)elem;
+							xmlNewProp(node1, BAD_CAST tmpName->name, BAD_CAST tmpName->value);
+						}
+					}
+	
+				}
+			}
+			if(tmpName->paths!= NULL)
+			{
+				ListIterator iter5 = createIterator(tmpName->paths);
+
+				void* elem4;
+				while((elem4 = nextElement(&iter5)) != NULL)
+				{
+					Path* tmpName = (Path*)elem4;
+					
+
+
+					node1 =
+					xmlNewChild(node, NULL, BAD_CAST "path",NULL);
+					xmlNewProp(node1, BAD_CAST "d", BAD_CAST tmpName->data);
+				
+					if(tmpName->otherAttributes != NULL)
+					{
+						ListIterator iter2 = createIterator(tmpName->otherAttributes);
+						void* elem;
+						while((elem = nextElement(&iter2)) != NULL)
+						{
+							Attribute* tmpName = (Attribute*)elem;
+							xmlNewProp(node1, BAD_CAST tmpName->name, BAD_CAST tmpName->value);
+						}
+					}
+
+				}
+			}
+			
+			if(tmpName->groups != NULL)
+			{
+				if(getLength(tmpName->groups) != 0)
+				{
+					ListIterator iter5 = createIterator(tmpName->groups);
+					void* elem4;
+					while((elem4 = nextElement(&iter5)) != NULL)
+					{
+						Group* tmpName = (Group*)elem4;
+						node1 = xmlNewChild(node, NULL, BAD_CAST "g", NULL);
+
+						if(tmpName->otherAttributes != NULL)
+						{
+							ListIterator iter2 = createIterator(tmpName->otherAttributes);
+							void* elem;
+							while((elem = nextElement(&iter2)) != NULL)
+							{
+								Attribute* tmpName = (Attribute*)elem;
+								xmlNewProp(node1, BAD_CAST tmpName->name, BAD_CAST tmpName->value);
+							}
+						}
+						
+						docGroup(tmpName, node1);
+					}
+					
+							
+				}
+			}		// To do: deal with units	
+}
+
+xmlDoc *createTree(const SVG* svg)
+{
+
+    xmlNodePtr node = NULL;/* node pointers */
+	xmlNsPtr ns1;
+    LIBXML_TEST_VERSION;
+
+    /* 
+     * Creates a new document, a node and set it as a root node
+     */
+    xmlDoc *doc = xmlNewDoc(BAD_CAST "1.0");
+    xmlNode *root_node = xmlNewNode(NULL, BAD_CAST "svg");
+    xmlDocSetRootElement(doc, root_node);
+
+	ns1 = xmlNewNs(root_node, BAD_CAST svg->namespace, NULL);
+		xmlSetNs(root_node, ns1);
+
+    /* 
+     * xmlNewChild() creates a new node, which is "attached" as child node
+     * of root_node node. 
+     */
+	if(strlen(svg->title) > 1)
+	{
+		xmlNewChild(root_node, NULL, BAD_CAST "title",
+                BAD_CAST svg->title);	
+	}
+
+	if(strlen(svg->description) > 1)
+	{
+		xmlNewChild(root_node, NULL, BAD_CAST "desc",
+                BAD_CAST svg->description);
+	}
+
+	
+	if(svg->otherAttributes != NULL)
+	{
+		ListIterator iter = createIterator(svg->otherAttributes);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Attribute* tmpName = (Attribute*)elem;
+			xmlNewProp(root_node, BAD_CAST tmpName->name, BAD_CAST tmpName->value);
+		}
+	}
+	if(svg->rectangles != NULL)
+	{
+		
+		ListIterator iter = createIterator(svg->rectangles);
+
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Rectangle* tmpName = (Rectangle*)elem;
+			if(strlen(tmpName->units) != 0)
+			{
+				
+				char x[256];
+				sprintf(x, "%f%s", tmpName->x, tmpName->units);
+
+				char y[256];
+				sprintf(y, "%f%s", tmpName->y, tmpName->units);
+
+				char H[256];
+				sprintf(H, "%f%s", tmpName->height, tmpName->units);
+
+				char W[256];
+				sprintf(W, "%f%s", tmpName->width, tmpName->units);
+				node =
+				xmlNewChild(root_node, NULL, BAD_CAST "rect",NULL);
+				xmlNewProp(node, BAD_CAST "x", BAD_CAST x);
+				xmlNewProp(node, BAD_CAST "y", BAD_CAST y);
+				xmlNewProp(node, BAD_CAST "width", BAD_CAST W);
+				xmlNewProp(node, BAD_CAST "height", BAD_CAST H);
+			}
+			else
+			{
+				
+				char x[256];
+				sprintf(x, "%f", tmpName->x);
+
+				char y[256];
+				sprintf(y, "%f", tmpName->y);
+
+				char H[256];
+				sprintf(H, "%f", tmpName->height);
+
+				char W[256];
+				sprintf(W, "%f", tmpName->width);
+				node =
+				xmlNewChild(root_node, NULL, BAD_CAST "rect",NULL);
+				xmlNewProp(node, BAD_CAST "x", BAD_CAST x);
+				xmlNewProp(node, BAD_CAST "y", BAD_CAST y);
+				xmlNewProp(node, BAD_CAST "width", BAD_CAST W);
+				xmlNewProp(node, BAD_CAST "height", BAD_CAST H);
+			}
+			
+			
+			if(tmpName->otherAttributes != NULL)
+			{
+				ListIterator iter2 = createIterator(tmpName->otherAttributes);
+				void* elem;
+				while((elem = nextElement(&iter2)) != NULL)
+				{
+					Attribute* tmpName = (Attribute*)elem;
+					xmlNewProp(node, BAD_CAST tmpName->name, BAD_CAST tmpName->value);
+				}
+			}
+			
+			// To do: deal with units	
+		}
+		
+	}
+	if(svg->circles != NULL)
+	{
+
+		ListIterator iter = createIterator(svg->circles);
+
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Circle* tmpName = (Circle*)elem;
+
+			if(strlen(tmpName->units) != 0)
+			{
+				char cx[256];
+				sprintf(cx, "%f%s", tmpName->cx, tmpName->units);
+
+				char cy[256];
+				sprintf(cy, "%f%s", tmpName->cy, tmpName->units);
+
+				char r[256];
+				sprintf(r, "%f%s", tmpName->r, tmpName->units);
+
+
+				node =
+				xmlNewChild(root_node, NULL, BAD_CAST "circle",NULL);
+				xmlNewProp(node, BAD_CAST "cx", BAD_CAST cx);
+				xmlNewProp(node, BAD_CAST "cy", BAD_CAST cy);
+				xmlNewProp(node, BAD_CAST "r", BAD_CAST r);
+			}
+			else
+			{
+				char cx[256];
+				sprintf(cx, "%f", tmpName->cx);
+
+				char cy[256];
+				sprintf(cy, "%f", tmpName->cy);
+
+				char r[256];
+				sprintf(r, "%f", tmpName->r);
+
+
+				node =
+				xmlNewChild(root_node, NULL, BAD_CAST "circle",NULL);
+				xmlNewProp(node, BAD_CAST "cx", BAD_CAST cx);
+				xmlNewProp(node, BAD_CAST "cy", BAD_CAST cy);
+				xmlNewProp(node, BAD_CAST "r", BAD_CAST r);
+			}
+			
+			if(tmpName->otherAttributes != NULL)
+			{
+				ListIterator iter2 = createIterator(tmpName->otherAttributes);
+				void* elem;
+				while((elem = nextElement(&iter2)) != NULL)
+				{
+					Attribute* tmpName = (Attribute*)elem;
+					xmlNewProp(node, BAD_CAST tmpName->name, BAD_CAST tmpName->value);
+				}
+			}
+			
+			// To do: deal with units	
+		}
+	}
+	if(svg->paths != NULL)
+	{
+		ListIterator iter = createIterator(svg->paths);
+
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Path* tmpName = (Path*)elem;
+			
+
+
+			node =
+			xmlNewChild(root_node, NULL, BAD_CAST "path",NULL);
+			xmlNewProp(node, BAD_CAST "d", BAD_CAST tmpName->data);
+		
+			if(tmpName->otherAttributes != NULL)
+			{
+				ListIterator iter2 = createIterator(tmpName->otherAttributes);
+				void* elem;
+				while((elem = nextElement(&iter2)) != NULL)
+				{
+					Attribute* tmpName = (Attribute*)elem;
+					xmlNewProp(node, BAD_CAST tmpName->name, BAD_CAST tmpName->value);
+				}
+			}
+			
+			// To do: deal with units	
+		}
+
+	}
+
+
+    /* 
+     * A simple loop that "automates" nodes creation 
+     */
+	if(getLength(svg->groups) != 0 && svg->groups != NULL)
+	{
+			ListIterator iter5 = createIterator(svg->groups);
+
+			void* elem4;
+			while((elem4 = nextElement(&iter5)) != NULL)
+			{
+				Group* tmpName = (Group*)elem4;
+				node = xmlNewChild(root_node, NULL, BAD_CAST "g", NULL);
+
+				if(tmpName->otherAttributes != NULL)
+				{
+					ListIterator iter2 = createIterator(tmpName->otherAttributes);
+					void* elem;
+					while((elem = nextElement(&iter2)) != NULL)
+					{
+						Attribute* tmpName = (Attribute*)elem;
+						xmlNewProp(node, BAD_CAST tmpName->name, BAD_CAST tmpName->value);
+					}
+				}
+				docGroup(tmpName, node);
+				// To do: deal with units	
+			}
+				
+	}
+    
+    return doc;
+}
+
+bool validateContentGroups(Group * tmpName)
+{
+	if(tmpName->rectangles == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		ListIterator iter = createIterator(tmpName->rectangles);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Rectangle* tmpName = (Rectangle*)elem;
+			if(tmpName->width < 0)
+			{
+				return false;
+			}
+			if(tmpName->height < 0)
+			{
+				return false;
+			}
+			if(tmpName->otherAttributes == NULL)
+			{
+				return false;
+			}
+
+			ListIterator iter = createIterator(tmpName->otherAttributes);
+			void* elem;
+			while((elem = nextElement(&iter)) != NULL)
+			{
+				Attribute* tmpName = (Attribute*)elem;
+				if(tmpName->name == NULL)
+				{
+					return false;
+				}
+			}
+
+		}
+	}
+
+	if(tmpName->circles == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		ListIterator iter = createIterator(tmpName->circles);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Circle* tmpName = (Circle*)elem;
+			if(tmpName->r < 0)
+			{
+				return false;
+			}
+			if(tmpName->otherAttributes == NULL)
+			{
+				return false;
+			}
+
+			if(tmpName->otherAttributes != NULL)
+			{
+				ListIterator iter = createIterator(tmpName->otherAttributes);
+				void* elem;
+				while((elem = nextElement(&iter)) != NULL)
+				{
+					Attribute* tmpName = (Attribute*)elem;
+					if(tmpName->name == NULL)
+					{
+						return false;
+					}
+				}
+			}
+			
+		}
+	}
+	
+	if(tmpName->paths == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		ListIterator iter = createIterator(tmpName->paths);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Path* tmpName = (Path*)elem;
+			if(tmpName->data == NULL)
+			{
+				return false;
+			}
+			else if(tmpName->otherAttributes == NULL)
+			{
+				return false;
+			}
+
+			ListIterator iter = createIterator(tmpName->otherAttributes);
+			void* elem;
+			while((elem = nextElement(&iter)) != NULL)
+			{
+				Attribute* tmpName = (Attribute*)elem;
+				if(tmpName->name == NULL)
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	if(tmpName->otherAttributes == NULL)
+	{
+		return false;
+
+	}
+	else
+	{
+		ListIterator iter = createIterator(tmpName->otherAttributes);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Attribute* tmpName = (Attribute*)elem;
+			if(tmpName->name == NULL)
+			{
+				return false;
+			}
+		}
+	}
+
+	if(tmpName->groups == NULL)
+	{
+		return false;
+	}
+	if(getLength(tmpName->groups) != 0)
+	{
+		ListIterator iter = createIterator(tmpName->groups);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Group* tmpName = (Group*)elem;
+			bool result = validateContentGroups(tmpName);
+			if(!(result))
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+bool validateContent(const SVG* svg)
+{
+
+	if(svg->rectangles == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		ListIterator iter = createIterator(svg->rectangles);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Rectangle* tmpName = (Rectangle*)elem;
+			if(tmpName->width < 0)
+			{
+				return false;
+			}
+			if(tmpName->height < 0)
+			{
+				return false;
+			}
+			if(tmpName->otherAttributes == NULL)
+			{
+				return false;
+			}
+
+			ListIterator iter = createIterator(tmpName->otherAttributes);
+			void* elem;
+			while((elem = nextElement(&iter)) != NULL)
+			{
+				Attribute* tmpName = (Attribute*)elem;
+				if(tmpName->name == NULL)
+				{
+					return false;
+				}
+			}
+
+		}
+	}
+
+	if(svg->circles == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		ListIterator iter = createIterator(svg->circles);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Circle* tmpName = (Circle*)elem;
+			if(tmpName->r < 0)
+			{
+				return false;
+			}
+			if(tmpName->otherAttributes == NULL)
+			{
+				return false;
+			}
+
+			if(tmpName->otherAttributes != NULL)
+			{
+				ListIterator iter = createIterator(tmpName->otherAttributes);
+				void* elem;
+				while((elem = nextElement(&iter)) != NULL)
+				{
+					Attribute* tmpName = (Attribute*)elem;
+					if(tmpName->name == NULL)
+					{
+						return false;
+					}
+				}
+			}
+			
+		}
+	}
+	
+	if(svg->paths == NULL)
+	{
+		return false;
+	}
+	else
+	{
+		ListIterator iter = createIterator(svg->paths);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Path* tmpName = (Path*)elem;
+			if(tmpName->data == NULL)
+			{
+				return false;
+			}
+			else if(tmpName->otherAttributes == NULL)
+			{
+				return false;
+			}
+
+			ListIterator iter = createIterator(tmpName->otherAttributes);
+			void* elem;
+			while((elem = nextElement(&iter)) != NULL)
+			{
+				Attribute* tmpName = (Attribute*)elem;
+				if(tmpName->name == NULL)
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	if(svg->otherAttributes == NULL)
+	{
+		return false;
+
+	}
+	else
+	{
+		ListIterator iter = createIterator(svg->otherAttributes);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Attribute* tmpName = (Attribute*)elem;
+			if(tmpName->name == NULL)
+			{
+				return false;
+			}
+		}
+	}
+
+	if(svg->groups == NULL)
+	{
+		return false;
+	}
+	if(getLength(svg->groups) != 0)
+	{
+		
+		ListIterator iter = createIterator(svg->groups);
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			Group* tmpName = (Group*)elem;
+			bool result = validateContentGroups(tmpName);
+			if(!result)
+			{
+				return false;
+			}
+		}
+		
+	}
+		
+	
+
+	return true;
+}
+
+bool validateSVG(const SVG* img, const char* schemaFile)
+{
+	if(img == NULL )
+	{
+        return NULL;
+    }
+    
+    xmlDocPtr doc = createTree(img); 
+	if (doc == NULL)
+	{
+		xmlFreeDoc(doc);
+		xmlCleanupParser();
+		return false; 
+	}
+    xmlSchemaPtr schema = NULL;
+    xmlSchemaParserCtxtPtr ctxt;
+    
+    xmlLineNumbersDefault(1);
+
+    ctxt = xmlSchemaNewParserCtxt(schemaFile);
+
+    xmlSchemaSetParserErrors(ctxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
+    schema = xmlSchemaParse(ctxt);
+    xmlSchemaFreeParserCtxt(ctxt);
+
+    
+    xmlSchemaValidCtxtPtr ctxt2;
+    ctxt2 = xmlSchemaNewValidCtxt(schema);
+    xmlSchemaSetValidErrors(ctxt2, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
+	int result = 0;
+    result = xmlSchemaValidateDoc(ctxt2, doc);
+
+	if(!validateContent(img))
+	{
+       result = -1;
+    }
+    if (result == 0)
+    {
+        
+        xmlFreeDoc(doc);
+        if(schema != NULL)
+		{
+            xmlSchemaFree(schema);
+		}
+            xmlSchemaCleanupTypes();
+            xmlSchemaFreeValidCtxt(ctxt2);
+            xmlMemoryDump();
+            xmlCleanupParser();
+        
+        return true; 
+    }
+    else
+    {
+        xmlFreeDoc(doc);
+        if(schema != NULL)
+		{
+            xmlSchemaFree(schema);
+		}
+            xmlSchemaCleanupTypes();
+            xmlSchemaFreeValidCtxt(ctxt2);
+            xmlMemoryDump();
+            xmlCleanupParser();
+        
+
+    }
+    
+    return false;
+} 
+
+SVG* createValidSVG(const char* fileName, const char* schemaFile)
+{
+	if(!(access( fileName, F_OK ) == 0) || !(access( schemaFile, F_OK ) == 0))
+	{
+        return NULL;
+    }
+    
+
+    xmlDocPtr doc =  xmlReadFile(fileName, NULL, 0);;
+	if (doc == NULL)
+	{
+		xmlFreeDoc(doc);
+		xmlCleanupParser();
+		return false; 
+	}
+	SVG* svg = NULL;
+	
+    xmlSchemaPtr schema = NULL;
+    xmlSchemaParserCtxtPtr ctxt;
+    
+    xmlLineNumbersDefault(1);
+
+    ctxt = xmlSchemaNewParserCtxt(schemaFile);
+
+    xmlSchemaSetParserErrors(ctxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
+    schema = xmlSchemaParse(ctxt);
+    xmlSchemaFreeParserCtxt(ctxt);
+	
+
+    xmlSchemaValidCtxtPtr ctxt2;
+    ctxt2 = xmlSchemaNewValidCtxt(schema);
+    xmlSchemaSetValidErrors(ctxt2, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
+	int result = 0;
+    result = xmlSchemaValidateDoc(ctxt2, doc);
+    if (result == 0)
+    {
+		
+       
+		xmlFreeDoc(doc);
+		xmlSchemaFreeValidCtxt(ctxt2);
+        if(schema != NULL)
+		{
+            xmlSchemaFree(schema);
+		}
+		
+		xmlSchemaCleanupTypes();
+		xmlMemoryDump();
+		xmlCleanupParser();
+
+		svg = createSVG(fileName);
+        
+    }
+    else
+    {
+		xmlSchemaFreeValidCtxt(ctxt2);
+        xmlFreeDoc(doc);
+
+        if(schema != NULL)
+		{
+            xmlSchemaFree(schema);
+		}
+            xmlSchemaCleanupTypes();
+            xmlMemoryDump();
+            xmlCleanupParser();
+        
+
+    }
+    return svg;
+}
+
+bool writeSVG(const SVG* img, const char* fileName)
+{
+	xmlDoc *doc = NULL;
+	if(fileName == NULL || img == NULL)
+	{
+		return false;
+	}
+
+	doc = createTree(img);
+
+	if ( doc == NULL)
+	{
+		xmlFreeDoc(doc);
+		xmlCleanupParser();
+		return false;
+	}
+
+    	xmlSaveFormatFileEnc(fileName, doc, "UTF-8", 1);
+		xmlFreeDoc(doc);
+		xmlCleanupParser();
+    	xmlMemoryDump();
+	 
+	
+
+	return true;
+}
+
 //This function does the parsing and allocates an SVG struct
 SVG* createSVG(const char* fileName){
 
     xmlDoc *doc = NULL;
     xmlNode *root_element = NULL;
+	
+	
+	
+    
     LIBXML_TEST_VERSION
 
-    // parse the file and get the DOM 
+    /*parse the file and get the DOM */
     doc = xmlReadFile(fileName, NULL, 0);
 
-    if (doc == NULL) 
-	{
+    if (doc == NULL) {
 		xmlFreeDoc(doc);
 		xmlCleanupParser();
 		return NULL;
@@ -37,8 +888,6 @@ SVG* createSVG(const char* fileName){
 
 	strcpy(svg->title, "");
 	strcpy(svg->description, "");
-
-	//init the lists inside SVG struct
 	svg->rectangles = initializeList(&rectangleToString, &deleteRectangle, &compareRectangles);
     svg->circles = initializeList(&circleToString, &deleteCircle, &compareCircles);
     svg->paths = initializeList(&pathToString, &deletePath, &comparePaths);
@@ -48,13 +897,14 @@ SVG* createSVG(const char* fileName){
     svg = print_element_names(root_element, svg);
 	
 
-    // free the document
+    /*free the document */
     xmlFreeDoc(doc);
 	
 
-
-    //Free the global variables that may have been allocated by the parser.
-     
+    /*
+     *Free the global variables that may
+     *have been allocated by the parser.
+     */
     xmlCleanupParser();
     
 
@@ -62,10 +912,13 @@ SVG* createSVG(const char* fileName){
     
 }
 
-// This function returns a humanly readable string representation of the entire vector image object
 char* SVGToString(const SVG* img)
 {
-	
+	if(img == NULL)
+	{
+		return NULL;
+	}
+
     char *str = toString(img->otherAttributes);
 	
 	char *str2 = toString(img->rectangles);
@@ -86,10 +939,11 @@ char* SVGToString(const SVG* img)
 	free(str3);
 	free(str2);
 	free(str);
+
 	
 	return tmpStr;
-}
 
+}
 void deleteSVG(SVG* img)
 {
 	
@@ -111,8 +965,7 @@ void deleteAttribute( void* data)
 
     Attribute* tmpName;
 	
-	if (data == NULL)
-	{
+	if (data == NULL){
 		return;
 	}
 	
@@ -128,8 +981,7 @@ char* attributeToString(void* data)
 	
 	int len;
 	
-	if (data == NULL)
-	{
+	if (data == NULL){
 		return NULL;
 	}
 	
@@ -140,6 +992,9 @@ char* attributeToString(void* data)
 	tmpStr = (char*)malloc(sizeof(char)*len);
 
 	sprintf(tmpStr, "Name = %s Value = %s\n",tmpName->name , tmpName->value);
+	
+	
+	
 	return tmpStr;
 }
 int compareAttributes(const void *first, const void *second)
@@ -150,6 +1005,7 @@ int compareAttributes(const void *first, const void *second)
 
 void deleteGroup(void* data)
 {
+
 	Group* tmpName;
 	
 	if (data == NULL){
@@ -169,6 +1025,8 @@ char* groupToString(void* data)
 
 	char* tmpStr;
 	Group* tmpName;
+
+	
 	
 	if (data == NULL){
 		return NULL;
@@ -191,7 +1049,8 @@ char* groupToString(void* data)
 	free(str4);
 	free(str5);
 	
-	return tmpStr;    
+	return tmpStr;
+    
 }
 int compareGroups(const void *first, const void *second)
 {
@@ -201,6 +1060,7 @@ int compareGroups(const void *first, const void *second)
 
 void deleteRectangle(void* data)
 {
+
 	Rectangle* tmpName;
 	
 	if (data == NULL){
@@ -214,8 +1074,12 @@ void deleteRectangle(void* data)
 }
 char* rectangleToString(void* data)
 {
+
+	
    	char* tmpStr;
 	Rectangle* tmpName;
+
+	
 	
 	if (data == NULL){
 		return NULL;
@@ -223,13 +1087,15 @@ char* rectangleToString(void* data)
 	
 	tmpName = (Rectangle*)data;
 		
+	
 	int len = snprintf(NULL, 0, "%f %f %f %f", tmpName->x, tmpName->y, tmpName->width, tmpName->height);
 	
+	// int length = strlen(tmpName->units);
 	char *str3 = toString(tmpName->otherAttributes);
 	
 	tmpStr = malloc(sizeof(str3) * len + 24);
 
-	sprintf(tmpStr, "\nRect\nx = %f y = %f Widtth = %f = Height = %f units =%s\n", tmpName->x, tmpName->y, tmpName->width, tmpName->height, tmpName->units);
+	sprintf(tmpStr, "\nRect\nx = %f y = %f Width = %f = Height = %f units =%s\n", tmpName->x, tmpName->y, tmpName->width, tmpName->height, tmpName->units);
 	strcat(tmpStr, str3);
 
 
@@ -244,6 +1110,7 @@ int compareRectangles(const void *first, const void *second)
 
 void deleteCircle(void* data)
 {
+
 	Circle* tmpName;
 	
 	if (data == NULL){
@@ -254,11 +1121,16 @@ void deleteCircle(void* data)
 	
 	freeList(tmpName->otherAttributes);
 	free(tmpName);
+
 }
 char* circleToString(void* data)
 {
+
+
    	char* tmpStr;
 	Circle* tmpName;
+
+	
 	
 	if (data == NULL){
 		return NULL;
@@ -267,7 +1139,9 @@ char* circleToString(void* data)
 	tmpName = (Circle*)data;
 			
 	int len = snprintf(NULL, 0, "%f %f %f", tmpName->cx, tmpName->cy, tmpName->r);
+	
 	char *str3 = toString(tmpName->otherAttributes);
+	
 	
 	tmpStr = malloc(sizeof(str3) * len + 24);
 	sprintf(tmpStr, "\nCirc\ncx = %f cy = %f r = %f units =%s", tmpName->cx, tmpName->cy, tmpName->r, tmpName->units);
@@ -296,11 +1170,14 @@ void deletePath(void* data)
 	
 	freeList(tmpName->otherAttributes);
 	free(tmpName);
+
 }
 char* pathToString(void* data)
 {
+
    	char* tmpStr;
 	Path* tmpName;
+
 	
 	if (data == NULL){
 		return NULL;
@@ -308,13 +1185,18 @@ char* pathToString(void* data)
 	
 	tmpName = (Path*)data;
 		
+	
 	int len = strlen(tmpName->data);
+	
 	char *str3 = toString(tmpName->otherAttributes);
+	
 	
 	tmpStr = malloc(sizeof(str3) * len + 24);
 
+	
 	sprintf(tmpStr, "\npath\ndata = %s", tmpName->data);
 	strcat(tmpStr, str3);
+
 
 	free(str3);
 	return tmpStr;
@@ -337,6 +1219,34 @@ char* rectangleToStringList(void* data)
 	return(rectangleToString(data));
 }
 
+void getRectG(List *Slist, List *list)
+{
+
+		ListIterator iter1 = createIterator(list);
+
+		void* elem1;
+		while((elem1 = nextElement(&iter1)) != NULL)
+		{
+			Group* tmpName = (Group*)elem1;
+			ListIterator iter = createIterator(tmpName->rectangles);
+
+			void* elem;
+			while((elem = nextElement(&iter)) != NULL)
+			{
+				
+				Rectangle* tmpName = (Rectangle*)elem;
+				
+				insertBack(Slist, tmpName);
+				
+			}
+
+			if(getLength(tmpName->groups) > 0)
+			{
+				getRectG(Slist, tmpName->groups);
+			}
+		}
+}
+
 List* getRects(const SVG* img)
 {
 	if(img == NULL)
@@ -347,29 +1257,39 @@ List* getRects(const SVG* img)
 	ListIterator iter = createIterator(img->rectangles);
 
 	ListIterator iter1 = createIterator(img->groups);
-
-	void* elem1;
-	while((elem1 = nextElement(&iter1)) != NULL)
-	{
-		Group* tmpName = (Group*)elem1;
-		ListIterator iter = createIterator(tmpName->rectangles);
-
-		void* elem;
-		while((elem = nextElement(&iter)) != NULL)
-		{
-			Rectangle* tmpName = (Rectangle*)elem;
-			
-				insertBack(list, tmpName);
-			
-			}
-	}
 	
+
+
 	void* elem;
 	while((elem = nextElement(&iter)) != NULL){
 		Rectangle* tmpName = (Rectangle*)elem;
+		
 		insertBack(list, tmpName);
 
 	}
+
+	void* elem1;
+	while((elem1 = nextElement(&iter1)) != NULL){
+		Group* tmpName = (Group*)elem1;
+		ListIterator iter2 = createIterator(tmpName->rectangles);
+		void* elem2;
+		while((elem2 = nextElement(&iter2)) != NULL)
+		{
+			
+			Rectangle* tmpName = (Rectangle*)elem2;
+			insertBack(list, tmpName);
+			
+		}
+		if(getLength(tmpName->groups) != 0)
+		{
+			
+				getRectG(list, tmpName->groups);
+		}
+	}
+
+
+	
+	
 	
 	return list;
 }
@@ -389,18 +1309,32 @@ char* CircleToStringList(void* data)
 	return(circleToString(data));
 }
 
-Rectangle * getGroupRect(Group *group)
+void getCircG(List *Slist, List *list)
 {
 
-	ListIterator iter = createIterator(group->rectangles);
-	void* elem;
-	while((elem = nextElement(&iter)) != NULL){
-		Rectangle* tmpName = (Rectangle*)elem;
-		
-		return (tmpName);
-		
-	}
-	return NULL;
+		ListIterator iter1 = createIterator(list);
+
+		void* elem1;
+		while((elem1 = nextElement(&iter1)) != NULL)
+		{
+			Group* tmpName = (Group*)elem1;
+			ListIterator iter = createIterator(tmpName->circles);
+
+			void* elem;
+			while((elem = nextElement(&iter)) != NULL)
+			{
+				
+				Circle* tmpName = (Circle*)elem;
+				
+				insertBack(Slist, tmpName);
+				
+			}
+
+			if(getLength(tmpName->groups) > 0)
+			{
+				getRectG(Slist, tmpName->groups);
+			}
+		}
 }
 List* getCircles(const SVG* img)
 {
@@ -409,9 +1343,11 @@ List* getCircles(const SVG* img)
 		return NULL;
 	}
 	List *list = initializeList(&CircleToStringList, &deleteCircleList, &compareCircles);
-
 	ListIterator iter = createIterator(img->circles);
+
 	ListIterator iter1 = createIterator(img->groups);
+	
+
 
 	void* elem1;
 	while((elem1 = nextElement(&iter1)) != NULL){
@@ -425,14 +1361,29 @@ List* getCircles(const SVG* img)
 				insertBack(list, tmpName);
 			
 			}
+
+			if(getLength(tmpName->groups) != 0)
+			{
+				
+					getCircG(list, tmpName->groups);
+			}
 	}
 	
+	
+
+
 	void* elem;
 	while((elem = nextElement(&iter)) != NULL){
 		Circle* tmpName = (Circle*)elem;
 		insertBack(list, tmpName);
 		
 	}
+
+	
+		
+	
+
+
 	return list;
 }
 // Function that returns a list of all groups in the struct.
@@ -447,6 +1398,24 @@ void deleteGroupList(void *data)
 {
 
 }
+void getGroupsH(List *Slist, List* group)
+{
+
+	ListIterator iter = createIterator(group);
+	void* elem;
+	while((elem = nextElement(&iter)) != NULL){
+		Group* tmpName = (Group*)elem;
+		insertBack(Slist, tmpName);
+
+		if(getLength(tmpName->groups)!= 0)
+		{
+			getGroupsH(Slist, tmpName->groups);
+		} 
+		
+		
+	}
+
+}
 List* getGroups(const SVG* img)
 {
 	if(img == NULL)
@@ -454,15 +1423,7 @@ List* getGroups(const SVG* img)
 		return NULL;
 	}
 	List *list = initializeList(&groupToStringList, &deleteGroupList, &compareGroups);
-	ListIterator iter = createIterator(img->groups);
-	
-	void* elem;
-	while((elem = nextElement(&iter)) != NULL){
-		Group* tmpName = (Group*)elem;
-		insertBack(list, tmpName);
-		
-		
-	}
+	getGroupsH(list, img->groups);
 	return list;
 }
 
@@ -476,16 +1437,48 @@ void deletePathList(void *data)
 {
 
 }
-// Function that returns a list of all paths in the struct.  
+// Function that returns a list of all paths in the struct.
+
+void getPathG(List *Slist, List *list)
+{
+
+		ListIterator iter1 = createIterator(list);
+
+		void* elem1;
+		while((elem1 = nextElement(&iter1)) != NULL)
+		{
+			Group* tmpName = (Group*)elem1;
+			ListIterator iter = createIterator(tmpName->paths);
+
+			void* elem;
+			while((elem = nextElement(&iter)) != NULL)
+			{
+				
+				Path* tmpName = (Path*)elem;
+				
+				insertBack(Slist, tmpName);
+				
+			}
+
+			if(getLength(tmpName->groups) > 0)
+			{
+				getRectG(Slist, tmpName->groups);
+			}
+		}
+}
 List* getPaths(const SVG* img)
 {
 	if(img == NULL)
 	{
 		return NULL;
 	}
-	List *list = initializeList(&pathToStringList, &deletePathList, &compareCircles);
+	List *list = initializeList(&CircleToStringList, &deleteCircleList, &compareCircles);
+
 	ListIterator iter = createIterator(img->paths);
+	
 	ListIterator iter1 = createIterator(img->groups);
+	
+
 
 	void* elem1;
 	while((elem1 = nextElement(&iter1)) != NULL){
@@ -499,15 +1492,28 @@ List* getPaths(const SVG* img)
 				insertBack(list, tmpName);
 			
 			}
-	}
 
+			if(getLength(tmpName->groups) != 0)
+			{
+					getPathG(list, tmpName->groups);
+			}
+	}
+	
 	void* elem;
 	while((elem = nextElement(&iter)) != NULL){
 		Path* tmpName = (Path*)elem;
 		insertBack(list, tmpName);
+		
 	}
+
+		
+	
+
+
 	return list;
 }
+
+
 
 int numRectsWithArea(const SVG* img, float area)
 {
@@ -515,12 +1521,13 @@ int numRectsWithArea(const SVG* img, float area)
 	{
 		return 0;
 	}
-
 	int count = 0;
 	double match = ceil(area);
-
 	List *list = getRects(img);
+
 	ListIterator iter1 = createIterator(list);
+	
+
 
 	void* elem1;
 	while((elem1 = nextElement(&iter1)) != NULL){
@@ -535,6 +1542,7 @@ int numRectsWithArea(const SVG* img, float area)
 		
 	}
 	
+	
 	freeList(list);
 	return count; 
 }
@@ -547,10 +1555,12 @@ int numCirclesWithArea(const SVG* img, float area)
 	}
 	int count = 0;
 	double match = ceil(area);
-
 	List *list = getCircles(img);
+
 	ListIterator iter1 = createIterator(list);
 	
+
+
 	void* elem1;
 	while((elem1 = nextElement(&iter1)) != NULL){
 		Circle* tmpName = (Circle*)elem1;
@@ -563,21 +1573,25 @@ int numCirclesWithArea(const SVG* img, float area)
 		
 	}
 	
+	
 	freeList(list);
 	return count;  
 }
 // Function that returns the number of all paths with the specified data - i.e. Path.data field
 int numPathsWithdata(const SVG* img, const char* data)
 {
+
 	if(data == NULL || img == NULL)
 	{
 		return 0;
 	}
-
 	int count = 0;
 	
 	List *list = getPaths(img);
+
 	ListIterator iter1 = createIterator(list);
+	
+
 
 	void* elem1;
 	while((elem1 = nextElement(&iter1)) != NULL){
@@ -593,11 +1607,14 @@ int numPathsWithdata(const SVG* img, const char* data)
 		free(str);
 		
 	}
-
+	
+	
+	
 	freeList(list);
 	return count;  
+	return 0; 
 }
-// Function that returns the number of all groups with the specified length 
+// Function that returns the number of all groups with the specified length - 
 int numGroupsWithLen(const SVG* img, int len)
 {
 	if(len < 0 || img == NULL)
@@ -606,9 +1623,11 @@ int numGroupsWithLen(const SVG* img, int len)
 	}
 	int total = 0;
 	int count = 0;
-
 	List *list = getGroups(img);
+
 	ListIterator iter1 = createIterator(list);
+	
+
 
 	void* elem1;
 	while((elem1 = nextElement(&iter1)) != NULL){
@@ -617,20 +1636,28 @@ int numGroupsWithLen(const SVG* img, int len)
 		int circL = getLength(tmpName->circles);
 		int rectL = getLength(tmpName->rectangles);
 		int pathL = getLength(tmpName->paths);
-		int groupL = getLength(tmpName->groups);
+		// int groupL = getLength(tmpName->groups);
 		
-		total = circL + rectL + pathL +groupL;
+		total = circL + rectL + pathL;
 		if(total == len)
 		{
 			count++;
 		}
 		
 	}
+	
+	
 	freeList(list);
+	
+	
 	return count; 
 }
+
+
+
 int numAttr(const SVG* img)
 {
+
 	int count = 0;
 	if(img == NULL)
 	{
@@ -642,6 +1669,7 @@ int numAttr(const SVG* img)
 	ListIterator iter3 = createIterator(img->rectangles);
 	ListIterator iter4 = createIterator(img->paths);
 	
+
 	void* elem1;
 	while((elem1 = nextElement(&iter1)) != NULL)
 	{
@@ -663,7 +1691,8 @@ int numAttr(const SVG* img)
 			while((elem = nextElement(&iter)) != NULL)
 			{
 				count++;
-			}	
+			}
+			
 		}
 
 		ListIterator iterC = createIterator(tmpName->circles);
@@ -676,9 +1705,10 @@ int numAttr(const SVG* img)
 			while((elem = nextElement(&iter)) != NULL)
 			{
 				count++;
-			}	
+			}
+			
 		}
-		
+
 		ListIterator iterP = createIterator(tmpName->paths);
 		void* elemP;
 		while((elemP = nextElement(&iterP)) != NULL)
@@ -689,8 +1719,10 @@ int numAttr(const SVG* img)
 			while((elem = nextElement(&iter)) != NULL)
 			{
 				count++;
-			}	
+			}
+			
 		}
+
 
 	}
 
@@ -723,6 +1755,8 @@ int numAttr(const SVG* img)
 			count++;
 		}
 	}
+	
+
 	void* elem0;
 	while((elem0 = nextElement(&iter)) != NULL){
 		count++;
@@ -732,79 +1766,985 @@ int numAttr(const SVG* img)
 	return count; 
 }
 
-int main()
+
+
+bool setAttribute(SVG* img, elementType elemType, int elemIndex, Attribute* newAttribute)
+{
+	if(img == NULL || newAttribute == NULL)
+	{
+		return false;
+	}
+
+	if(elemType == RECT)
+	{
+		if(newAttribute->name == NULL)
+		{
+			return false;
+		}
+		if(elemIndex < 0)
+		{
+			return false;
+		}
+		if(img->rectangles == NULL)
+		{
+			return false;
+		}
+		ListIterator iter = createIterator(img->rectangles);
+		int count = 0;
+
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			if(count == elemIndex)
+			{
+				Rectangle* tmpRect = (Rectangle*)elem;
+				if(strcmp(newAttribute->name, "x") == 0)
+				{
+					tmpRect->x = atof(newAttribute->value);
+					free(newAttribute->name);
+					free(newAttribute);
+					
+					return true;
+				}
+				else if(strcmp(newAttribute->name, "y") == 0)
+				{
+					tmpRect->y = atof(newAttribute->value);
+					free(newAttribute->name);
+					free(newAttribute);
+					
+					return true;
+				}
+				else if(strcmp(newAttribute->name, "width") == 0)
+				{
+					tmpRect->width = atof(newAttribute->value);
+					free(newAttribute->name);
+					free(newAttribute);
+					return true;
+				}
+				else if(strcmp(newAttribute->name, "height") == 0)
+				{
+					tmpRect->height = atof(newAttribute->value);
+					free(newAttribute->name);
+					free(newAttribute);
+					return true;
+				} 
+				else
+				{
+					if(tmpRect->otherAttributes != NULL && getLength(tmpRect->otherAttributes) > 0)
+					{
+						ListIterator iter = createIterator(tmpRect->otherAttributes);
+						void* elem;
+						while((elem = nextElement(&iter)) != NULL)
+						{
+							Attribute* tmpName = (Attribute*)elem;
+							if(strcmp(newAttribute->name, tmpName->name) == 0)
+							{
+								strcpy(tmpName->value, newAttribute->value);
+								free(newAttribute->name);
+								free(newAttribute);
+								return true;
+							}
+						}
+
+					}
+						insertBack(tmpRect->otherAttributes, (void*)newAttribute);				
+						return true;		
+				}
+			}
+			count++;
+		}	
+	}
+	else if(elemType == CIRC)
+	{
+		if(elemIndex < 0)
+		{
+			return false;
+		}
+		
+		ListIterator iter = createIterator(img->circles);
+		int count = 0;
+
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			if(count == elemIndex)
+			{
+				Circle* tmpCirc = (Circle*)elem;
+				if(strcmp(newAttribute->name, "cx") == 0)
+				{
+
+					tmpCirc->cx = atof(newAttribute->value);
+					free(newAttribute->name);
+					free(newAttribute);
+					
+					return true;
+				}
+				else if(strcmp(newAttribute->name, "cy") == 0)
+				{
+					tmpCirc->cy = atof(newAttribute->value);
+					free(newAttribute->name);
+					free(newAttribute);
+					
+					return true;
+				}
+				else if(strcmp(newAttribute->name, "r") == 0)
+				{
+					tmpCirc->r = atof(newAttribute->value);
+					free(newAttribute->name);
+					free(newAttribute);
+					
+					return true;
+				}
+				else
+				{
+					if(tmpCirc->otherAttributes != NULL && getLength(tmpCirc->otherAttributes) != 0)
+					{
+						ListIterator iter = createIterator(tmpCirc->otherAttributes);
+						void* elem;
+						while((elem = nextElement(&iter)) != NULL)
+						{
+							Attribute* tmpName = (Attribute*)elem;
+							if(strcmp(newAttribute->name, tmpName->name) == 0)
+							{
+
+								strcpy(tmpName->value, newAttribute->value);
+								free(newAttribute->name);
+								free(newAttribute);
+								
+								return true;
+							}
+						}
+					}					
+					insertBack(tmpCirc->otherAttributes, (void*)newAttribute);						
+					return true;	
+				}
+			}
+			count++;
+
+		}
+	
+	}
+	else if(elemType == PATH)
+	{
+		if(elemIndex < 0)
+		{
+			return false;
+		}
+		
+		ListIterator iter = createIterator(img->paths);
+		int count = 0;
+
+		void* elem;
+		while((elem = nextElement(&iter)) != NULL)
+		{
+			if(count == elemIndex)
+			{
+				Path* tmpPath = (Path*)elem;
+				if(strcmp(newAttribute->name, "d") == 0)
+				{
+
+					strcpy(tmpPath->data, newAttribute->value);
+					free(newAttribute->name);
+					free(newAttribute);
+					
+					return true;
+				}
+				else
+				{
+					if(tmpPath->otherAttributes != NULL && getLength(tmpPath->otherAttributes) != 0)
+					{
+						ListIterator iter = createIterator(tmpPath->otherAttributes);
+						void* elem;
+						while((elem = nextElement(&iter)) != NULL)
+						{
+							Attribute* tmpName = (Attribute*)elem;
+							if(strcmp(newAttribute->name, tmpName->name) == 0)
+							{
+								strcpy(tmpName->value, newAttribute->value);
+								free(newAttribute->name);
+								free(newAttribute);
+								return true;
+							}
+						}
+					}	
+						insertBack(tmpPath->otherAttributes, (void*)newAttribute);
+						return true;	
+				}
+			}
+			count++;
+		}
+	
+	}
+	else if(elemType == SVG_IMG)
+	{
+		if(strcmp(newAttribute->name, "title") == 0)
+		{
+			strcpy(img->title, newAttribute->value);
+			free(newAttribute->name);
+			free(newAttribute);
+			return true;
+		}
+		else if(strcmp(newAttribute->name, "title") == 0)
+		{
+			strcpy(img->title, newAttribute->value);
+			free(newAttribute->name);
+			free(newAttribute);
+			return true;
+		}
+		else
+		{
+			if(img->otherAttributes != NULL)
+			{
+				if(getLength(img->otherAttributes) != 0)
+				{
+					ListIterator iter = createIterator(img->otherAttributes);
+					void* elem;
+					while((elem = nextElement(&iter)) != NULL)
+					{
+						Attribute* tmpName = (Attribute*)elem;
+						if(strcmp(tmpName->name, newAttribute->name) == 0)
+						{
+							strcpy(tmpName->value, newAttribute->value);
+							free(newAttribute->name);
+							free(newAttribute);
+							return true;
+						}
+						
+					}
+				}
+					insertBack(img->otherAttributes, newAttribute);
+					return true;
+			}
+		}
+	}
+	else
+	{
+		return false;
+	}
+	return false;
+}
+
+void addComponent(SVG* img, elementType type, void* newElement)
+{
+	if(img != NULL)
+	{
+		if(type == RECT)
+		{
+			Rectangle* tmpName = (Rectangle*)newElement;
+			insertBack(img->rectangles,tmpName);
+		}
+		if(type == CIRC)
+		{
+			Circle* tmpName = (Circle*)newElement;
+			insertBack(img->circles,tmpName);
+		}
+		if(type == PATH)
+		{
+			Path* tmpName = (Path*)newElement;
+			insertBack(img->paths,tmpName);
+		}
+		
+	}
+}
+
+char* attrToJSON(const Attribute *a)
+{
+	char *string = "{}";
+	if(a == NULL)
+	{
+		return string;
+	}
+	int len = strlen(a->name)+strlen(a->value)+24;
+	string = (char*)malloc(sizeof(char)*len + 100);
+
+	sprintf(string, "{\"name\":\"%s\",\"value\":\"%s\"}", a->name, a->value);
+	return string;
+}
+
+char* circleToJSON(const Circle *c)
+{
+	char *string = "{}";
+	if(c == NULL)
+	{
+		return string;
+	}
+	int len = snprintf(NULL, 0, "%f %f %f", c->cx, c->cy, c->r);
+	string = (char*)malloc(sizeof(char)*len + 1000);
+	int numAtt = getLength(c->otherAttributes);
+	char units[20] = "";
+	strcpy(units, c->units);
+
+	sprintf(string, "{\"cx\":%.2f,\"cy\":%.2f,\"r\":%.2f,\"numAttr\":%d,\"units\":\"%s\"}", c->cx, c->cy, c->r, numAtt, c->units);
+	return string;
+	
+}
+char* rectToJSON(const Rectangle *r)
+{
+	char *string = "{}";
+	if(r == NULL)
+	{
+		return string;
+	}
+	int len = snprintf(NULL, 0, "%f %f %f %f", r->x, r->y, r->width, r->height);
+	string = (char*)malloc(sizeof(char)*len + 100);
+	int numAtt = getLength(r->otherAttributes);
+
+	sprintf(string, "{\"x\":%.2f,\"y\":%.2f,\"w\":%.2f,\"h\":%.2f,\"numAttr\":%d,\"units\":\"%s\"}", r->x, r->y, r->width, r->height,numAtt,r->units);
+	return string;
+}
+char* pathToJSON(const Path *p)
+{
+	char *string = "{}";
+	if(p == NULL)
+	{
+		return string;
+	}
+	string = (char*)malloc(sizeof(char)*strlen(p->data) + 100);
+	int numAtt = getLength(p->otherAttributes);
+	char *tempD = malloc(sizeof(char)* strlen(p->data)+2);
+	strcpy(tempD,p->data);
+	if(strlen(tempD) > 64)
+	{
+		tempD[64] = '\0';
+	}
+	
+
+	sprintf(string, "{\"d\":\"%s\",\"numAttr\":%d}", tempD, numAtt);
+	free(tempD);
+	return string;
+	
+}
+char* groupToJSON(const Group *g)
+{
+	char *string = "{}";
+	if(g == NULL)
+	{
+		return string;
+	}
+	string = (char*)malloc(sizeof(char)* 100);
+	int numAtt = getLength(g->otherAttributes);
+	int children = 0;
+	children += getLength(g->rectangles);
+	children += getLength(g->circles);
+	children += getLength(g->paths);
+	children += getLength(g->groups);
+
+
+	sprintf(string, "{\"children\":%d,\"numAttr\":%d}", children, numAtt);
+	return string;
+}
+char* attrListToJSON(const List *list)
+{
+	char *string = NULL;
+	char *tempString = NULL;
+	int size = 0;
+	if(list == NULL)
+	{
+		return "[]";
+	}
+	
+	ListIterator iter = createIterator((List*)list);
+	void* elem;
+	while((elem = nextElement(&iter)) != NULL)
+	{
+		Attribute* tmpName = (Attribute*)elem;
+		char *str = attrToJSON(tmpName);
+		size += strlen(str);
+		free(str);
+
+	}
+	string = malloc(sizeof(char)*size+24);
+	strcpy(string, "[");
+	ListIterator iter2 = createIterator((List*)list);
+	int stop = getLength((List*)list);
+	int count = 0;
+	void* elem2;
+	while((elem2 = nextElement(&iter2)) != NULL)
+	{
+		count++;
+		Attribute* tmpName = (Attribute*)elem2;
+		// tempString = malloc(sizeof(char)*size + 24);
+		tempString = attrToJSON(tmpName);
+
+		strcat(string, tempString);
+		if(count != stop)
+		{
+			strcat(string, ",");
+		}
+		
+		free(tempString);
+		tempString = NULL;
+	}
+	
+	strcat(string, "]");
+	return string;
+}
+char* circListToJSON(const List *list)
 {
 
-	SVG *svg;
-	svg = createSVG("test.svg"); // This is a test file, you can find it /bin 
+	char *string = NULL;
+	char *tempString = NULL;
+	int size = 0;
+	if(list == NULL)
+	{
+		return "[]";
+	}
+	
+	ListIterator iter = createIterator((List*)list);
+	void* elem;
+	while((elem = nextElement(&iter)) != NULL)
+	{
+		Circle* tmpName = (Circle*)elem;
+		char *str = circleToJSON(tmpName);
+		size += strlen(str);
+		
+		free(str);
 
-	char *str = SVGToString(svg);
+	}
+	string = malloc(sizeof(char)*size+24);
+	strcpy(string, "[");
+	ListIterator iter2 = createIterator((List*)list);
+	int stop = getLength((List*)list);
+	int count = 0;
+	void* elem2;
+	while((elem2 = nextElement(&iter2)) != NULL)
+	{
+		count++;
+		Circle* tmpName = (Circle*)elem2;
+		
+		tempString = circleToJSON(tmpName);
 
-	printf(" \n --------------------------------------- SVG: --------------------------------------- \n%s\n", str);
+		
+		strcat(string, tempString);
+		if(count != stop)
+		{
+			strcat(string, ",");
+		}
+		
+		free(tempString);
+		tempString = NULL;
+	}
+	
+	strcat(string, "]");
+	return string;
+}
+char* rectListToJSON(const List *list)
+{
+	char *string = NULL;
+	char *tempString = NULL;
+	int size = 0;
+	if(list == NULL)
+	{
+		return "[]";
+	}
+	
+	ListIterator iter = createIterator((List*)list);
+	void* elem;
+	while((elem = nextElement(&iter)) != NULL)
+	{
+		Rectangle* tmpName = (Rectangle*)elem;
+		char *str = rectToJSON(tmpName);
+		size += strlen(str);
+		
+		free(str);
+
+	}
+	string = malloc(sizeof(char)*size+24);
+	strcpy(string, "[");
+	ListIterator iter2 = createIterator((List*)list);
+	int stop = getLength((List*)list);
+	int count = 0;
+	void* elem2;
+	while((elem2 = nextElement(&iter2)) != NULL)
+	{
+		count++;
+		Rectangle* tmpName = (Rectangle*)elem2;
+		
+		tempString = rectToJSON(tmpName);
+
+		strcat(string, tempString);
+		if(count != stop)
+		{
+			strcat(string, ",");
+		}
+		
+		free(tempString);
+		tempString = NULL;
+	}
+	
+	strcat(string, "]");
+	return string;
+}
+char* pathListToJSON(const List *list)
+{
+
+	char *string = NULL;
+	char *tempString = NULL;
+	int size = 0;
+	if(list == NULL)
+	{
+		return "[]";
+	}
+	
+	ListIterator iter = createIterator((List*)list);
+	void* elem;
+	while((elem = nextElement(&iter)) != NULL)
+	{
+		Path* tmpName = (Path*)elem;
+		char *str = pathToJSON(tmpName);
+		size += strlen(str);
+		
+		free(str);
+
+	}
+	string = malloc(sizeof(char)*size+24);
+	strcpy(string, "[");
+	ListIterator iter2 = createIterator((List*)list);
+	int stop = getLength((List*)list);
+	int count = 0;
+	void* elem2;
+	while((elem2 = nextElement(&iter2)) != NULL)
+	{
+		count++;
+		Path* tmpName = (Path*)elem2;
+		// tempString = malloc(sizeof(char)*size + 24);
+		tempString = pathToJSON(tmpName);
+
+		
+		strcat(string, tempString);
+		if(count != stop)
+		{
+			strcat(string, ",");
+		}
+		
+		free(tempString);
+		tempString = NULL;
+	}
+	
+	strcat(string, "]");
+	return string;
+}
+char* groupListToJSON(const List *list)
+{
+	char *string = NULL;
+	char *tempString = NULL;
+	int size = 0;
+	if(list == NULL)
+	{
+		return "[]";
+	}
+	
+	ListIterator iter = createIterator((List*)list);
+	void* elem;
+	while((elem = nextElement(&iter)) != NULL)
+	{
+		Group* tmpName = (Group*)elem;
+		char *str = groupToJSON(tmpName);
+		size += strlen(str);
+		
+		free(str);
+
+	}
+	string = malloc(sizeof(char)*size+24);
+	strcpy(string, "[");
+	ListIterator iter2 = createIterator((List*)list);
+	int stop = getLength((List*)list);
+	int count = 0;
+	void* elem2;
+	while((elem2 = nextElement(&iter2)) != NULL)
+	{
+		count++;
+		Group* tmpName = (Group*)elem2;
+		// tempString = malloc(sizeof(char)*size + 24);
+		tempString = groupToJSON(tmpName);
+
+		
+		strcat(string, tempString);
+		if(count != stop)
+		{
+			strcat(string, ",");
+		}
+		
+		free(tempString);
+		tempString = NULL;
+	}
+	
+	strcat(string, "]");
+	return string;
+}
+char* SVGtoJSON(const SVG* img)
+{
+	char *string = "{}";
+	if(img == NULL)
+	{
+		return string;
+	}
+	string = (char*)malloc(sizeof(char)* 100);
+	List *list1 = getRects(img);
+	List *list2 = getCircles(img);
+	List *list3 = getPaths(img);
+	List *list4 = getGroups(img);
+
+	int rectLength = getLength(list1);
+	int circLength = getLength(list2);
+	int pathLength = getLength(list3);
+	int groupLength = getLength(list4);
 
 
-	//uncomment this to get details about the groups only
-	/*
-	List *list = getGroups(svg);
-	char *str1 = toString(list);
+	sprintf(string, "{\"numRect\":%d,\"numCirc\":%d,\"numPaths\":%d,\"numGroups\":%d}", rectLength, circLength, pathLength, groupLength);
+	return string;
+}
 
-	printf("+++++++++++++++++++++++++ Groups +++++++++++++++++++++++++\n %s\n", str1);
+SVG* JSONtoSVG(const char* svgString)
+{
 
-	// uncomment this to search for groups lists with certain length
-	// int test = 4;
-	// int num = numGroupsWithLen(svg, test);
-	// printf("NUM G = %d\n", num);
-	*/
+	return NULL;
+}
+Rectangle* JSONtoRect(const char* svgString)
+{
+	return NULL;
+}
+Circle* JSONtoCircle(const char* svgString)
+{
+	return NULL;
+}
 
+int test(int i)
+{
 
-	//uncomment this to get details about the groups only
-	/*
-	List *list = getCircles(svg);
-	char *str1 = toString(list);
-
-	printf("+++++++++++++++++++++++++ Circles +++++++++++++++++++++++++\n %s\n", str1);
-
-	// uncomment this to search for Circles lists with certain length
-	// int test = 4;
-	// int num = numCirclesWithLen(svg, test);
-	// printf("NUM C = %d\n", num);
-	*/
+	return i+1;
+}
 
 
-	//uncomment this to get details about the Rects only
-	/*
-	List *list = getRects(svg);
-	char *str1 = toString(list);
-
-	printf("+++++++++++++++++++++++++ Rects +++++++++++++++++++++++++\n %s\n", str1);
-
-	// uncomment this to search for Circles lists with certain length
-	// int test = 4;
-	// int num = numRectsWithLen(svg, test);
-	// printf("NUM R = %d\n", num);
-	*/
-
-	//uncomment this to get details about the Paths only
-	/*
-	List *list = getPaths(svg);
-	char *str1 = toString(list);
-
-	printf("+++++++++++++++++++++++++ Paths +++++++++++++++++++++++++\n %s\n", str1);
-
-	// uncomment this to search for Paths lists with certain length
-	// int test = 4;
-	// int num = numPathsWithLen(svg, test);
-	// printf("NUM P = %d\n", num);
-	*/
-
-
-	//uncomment these if any calls of the hlepers functions were done
-	free(str);
-	// free(str1);
-	// freeList(list);
-
-
+char *JSONString(char *filename, char *schemafile)
+{
+	SVG *svg = createValidSVG(filename, schemafile);
+	if(svg == NULL)
+	{
+		return NULL;
+	}
+	bool res = validateSVG(svg, schemafile);
+	if(res == false)
+	{
+		return NULL;
+	}
+	char *str = SVGtoJSON(svg);
 	deleteSVG(svg);
 
-	return 0;
+	return str;
+}
+
+char *JSONStringRect(char *filename, char *schemafile)
+{
+	SVG *svg = createValidSVG(filename, schemafile);
+	if(svg == NULL)
+	{
+		return NULL;
+	}
+	bool res = validateSVG(svg, schemafile);
+	if(res == false)
+	{
+		return NULL;
+	}
+	List *list = getRects(svg);
+	char *str = rectListToJSON(list);
+	freeList(list);
+	deleteSVG(svg);
+
+	return str;
+}
+
+char *JSONStringCirc(char *filename, char *schemafile)
+{
+	SVG *svg = createValidSVG(filename, schemafile);
+	if(svg == NULL)
+	{
+		return NULL;
+	}
+	bool res = validateSVG(svg, schemafile);
+	if(res == false)
+	{
+		return NULL;
+	}
+	List *list = getCircles(svg);
+	char *str = circListToJSON(list);
+	freeList(list);
+	deleteSVG(svg);
+
+	return str;
+}
+
+char *JSONStringPath(char *filename, char *schemafile)
+{
+	SVG *svg = createValidSVG(filename, schemafile);
+	if(svg == NULL)
+	{
+		return NULL;
+	}
+	bool res = validateSVG(svg, schemafile);
+	if(res == false)
+	{
+		return NULL;
+	}
+	List *list = getPaths(svg);
+	char *str = pathListToJSON(list);
+	freeList(list);
+	deleteSVG(svg);
+
+	return str;
+}
+char *JSONStringGroup(char *filename, char *schemafile)
+{
+	SVG *svg = createValidSVG(filename, schemafile);
+	if(svg == NULL)
+	{
+		return NULL;
+	}
+	bool res = validateSVG(svg, schemafile);
+	if(res == false)
+	{
+		return NULL;
+	}
+	List *list = getGroups(svg);
+	char *str = groupListToJSON(list);
+	freeList(list);
+	deleteSVG(svg);
+	return str;
+}
+
+char *JSONStringTandD(char *filename, char *schemafile)
+{
+	SVG *svg = createValidSVG(filename, schemafile);
+	if(svg == NULL)
+	{
+		return NULL;
+	}
+	bool res = validateSVG(svg, schemafile);
+	if(res == false)
+	{
+		return NULL;
+	}
+
+	int j = 0;
+	
+	char *desc = (char*)malloc(sizeof(char)*strlen(svg->description)+24);
+	strcpy(desc, svg->description);
+	
+
+	
+	for (int i = 0; i < strlen(desc); i ++) {
+				if (desc[i] != '"' && desc[i] != '\\') { 
+					desc[j++] = desc[i];
+				} else if (desc[i+1] == '"' && desc[i] == '\\') { 
+					desc[j++] = '"';
+				} else if (desc[i+1] != '"' && desc[i] == '\\') { 
+					desc[j++] = '\\';
+				}
+	}
+
+
+	if(j>0)
+	desc[j]=0;
+
+
+	
+	int size = strlen(svg->title) +  strlen(desc);
+	char *string = (char*)malloc(sizeof(char)*size+24);
+	sprintf(string, "{\"title\":\"%s\",\"desc\":\"%s\"}", svg->title, desc);
+	free(desc);
+	deleteSVG(svg);
+	return string;
+}
+
+char *scaleShape(char *filename,char *schemafile, char *elemType, int elementIndex, char *value)
+{
+	
+	SVG *svg = createValidSVG(filename, schemafile);
+	if(svg == NULL)
+	{
+		return NULL;
+	}
+	bool res = validateSVG(svg, schemafile);
+	if(res == false)
+	{
+		return NULL;
+	}
+
+	if(strcmp(elemType, "rect") == 0)
+	{
+		int count = 0;
+		elementType elem = RECT;
+		Attribute *Att = createAttribute("HI");
+		int memLen = strlen("attrName")+2;
+        Att->name = malloc(sizeof(char) *memLen);
+
+		Attribute *Att2 = createAttribute("HI");
+		int memLen2 = strlen("attrName")+2;
+        Att2->name = malloc(sizeof(char) *memLen2);
+		
+		List *list = getRects(svg);
+		List *list2 = getGroups(svg);
+		ListIterator iter2 = createIterator(list);
+		ListIterator iter3 = createIterator(list2);
+		void* elem1;
+		while((elem1 = nextElement(&iter3)) != NULL)
+		{
+			
+			Group* tmpName = (Group*)elem1;
+			ListIterator iter3 = createIterator(tmpName->rectangles);
+			
+			while((elem1 = nextElement(&iter3)) != NULL)
+			{
+				count++;
+			}
+			
+			
+		}
+		freeList(list2);
+		
+		void* elem2;
+		bool value1 = false;
+		bool value2 = false;
+		int i = 0;
+		int length = getLength(list);
+		length = length - count;
+		while((elem2 = nextElement(&iter2)) != NULL)
+		{
+			Attribute *Att = createAttribute("HI");
+			int memLen = strlen("attrName")+2;
+			Att->name = malloc(sizeof(char) *memLen);
+
+			Attribute *Att2 = createAttribute("HI");
+			int memLen2 = strlen("attrName")+2;
+			Att2->name = malloc(sizeof(char) *memLen2);
+			
+			Rectangle* tmpName = (Rectangle*)elem2;
+			float xtemp = tmpName->width * atof(value);
+			float ytemp = tmpName->height * atof(value);
+			// tempString = malloc(sizeof(char)*size + 24);
+			strcpy(Att->name,"width");
+			char x[20];
+			sprintf(x, "%f", xtemp);
+			strcpy(Att->value,x);
+			memset(x, 0, 20);
+
+			strcpy(Att2->name,"height");
+			char y[20];
+			sprintf(y, "%f", ytemp);
+			strcpy(Att2->value,y);
+			memset(y, 0, 20);
+			if(i < length)
+			{
+				value1 = setAttribute(svg, elem, i, Att);
+			 	value2 = setAttribute(svg, elem, i, Att2);
+			}
+			 
+			i++;
+		}
+			if(value1 == false)
+			{
+				// free(Att);
+				// free(Att2);
+				deleteSVG(svg);
+				return NULL;
+			}
+			if(value2 == false)
+			{
+				// free(Att);
+				// free(Att2);
+				deleteSVG(svg);
+				return NULL;
+			}	
+		bool write = writeSVG(svg, filename);
+		if(write == false)
+		{
+			// free(Att);
+			// free(Att2);
+			deleteSVG(svg);
+			return NULL;
+		}
+		freeList(list);
+	}
+
+	if(strcmp(elemType, "circ") == 0)
+	{
+		int count = 0;
+		elementType elem = CIRC;
+		Attribute *Att = createAttribute("HI");
+		int memLen = strlen("attrName")+2;
+        Att->name = malloc(sizeof(char) *memLen);
+
+		List *list = getCircles(svg);
+		List *list2 = getGroups(svg);
+		ListIterator iter2 = createIterator(list);
+		ListIterator iter3 = createIterator(list2);
+		void* elem1;
+		while((elem1 = nextElement(&iter3)) != NULL)
+		{
+			
+			Group* tmpName = (Group*)elem1;
+			ListIterator iter3 = createIterator(tmpName->circles);
+			
+			while((elem1 = nextElement(&iter3)) != NULL)
+			{
+				count++;
+			}
+			
+			
+		}
+		
+		freeList(list2);
+		void* elem2;
+		bool value1 = false;
+		
+		int i = 0;
+		int length = getLength(list);
+		length = length - count;
+		while((elem2 = nextElement(&iter2)) != NULL)
+		{
+			Attribute *Att = createAttribute("HI");
+			int memLen = strlen("attrName")+2;
+			Att->name = malloc(sizeof(char) *memLen);
+
+			
+			Circle* tmpName = (Circle*)elem2;
+			float xtemp = tmpName->r * atof(value);
+			
+			// tempString = malloc(sizeof(char)*size + 24);
+			strcpy(Att->name,"r");
+			char x[20];
+			sprintf(x, "%f", xtemp);
+			strcpy(Att->value,x);
+			memset(x, 0, 20);
+
+			
+			if(i < length)
+			{
+				value1 = setAttribute(svg, elem, i, Att);
+			}
+			
+			
+			i++;
+		}
+			if(value1 == false)
+			{
+				// free(Att);
+				// free(Att2);
+				deleteSVG(svg);
+				return "nyaheh";
+			}
+				
+		bool write = writeSVG(svg, filename);
+		if(write == false)
+		{
+			// free(Att);
+			// free(Att2);
+			deleteSVG(svg);
+			return "ll";
+		}
+		freeList(list);
+	}
+
+	deleteSVG(svg);
+	return "yes";
 }
