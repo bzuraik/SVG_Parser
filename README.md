@@ -34,7 +34,7 @@ npm run dev PORT
 ## Directory Structure
 
 ```Bash
-# This contains the Backend Node Server, with our Web Application and API
+# This contains the Backend Node Server, with my Web Application and API
 app.js
 
 # These are the package configuration files for npm to install dependencies
@@ -50,13 +50,13 @@ public/index.js
 # This is the Frontend Custom Style Sheet file
 public/style.css
 
-# This is the directory for uploaded .vcf files
+# This is the directory for uploaded .svg files
 upload/
 
-# This is the directory where you put all your C parser code
+# This is the directory where I put all my C parser code
 parser/
 ```
-You will need to add functionality to app.js, index.html, index.js and, if you wish, style.css.
+
 
 
 ## Components
@@ -199,7 +199,7 @@ $(document).ready(function() {
     // On page-load AJAX Example
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
+        dataType: 'json',       //Data type -  
         url: '/someendpoint',   //The server endpoint we are connecting to
         success: function (data) {
             /*  Do something with returned object
@@ -219,7 +219,6 @@ $(document).ready(function() {
 // When you "submit" an HTML form, the default action is to redirect to another page
 // This overrides it and allows us to make an AJAX request and edit data on the page
     $('#someform').submit(function(e){
-        //Dumy output, to show that the form callback is working
         $('#blah').html("Callback from the form");
         e.preventDefault();
         $.ajax({});
@@ -305,15 +304,7 @@ res.send({
 });
 ```
 
-Note that `res.send()` should take a JavaScript Native Object, NOT a string _with_ JSON in it
 
-You can parse a JSON string into a native object:
-
-```JavaScript
-let variableWithJSONString = '["list", "of", "array", "items"]';
-const nativeObject = JSON.parse(variableWithJSONString);
-# ["list", "of", "array", "items"]
-```
 The stub provides `app.get()` and `app.port()` routes for handling .vcf file upload/doanload requests from the browser.  All .vcf files must be placed ino the uploads/ directory.
 
 ### NodeJS Libraries
