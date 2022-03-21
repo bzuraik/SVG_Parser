@@ -4,6 +4,16 @@
 - Integrating the full C backend with Node.js through the ffi-napi library.
 
 
+
+
+
+
+https://user-images.githubusercontent.com/95400232/159369822-9adfd1f3-bb2b-4c77-bd55-441aa2f11857.mp4
+
+
+
+
+
 ## Installation of Node App
 
 ### 1. Install
@@ -83,7 +93,7 @@ https://developer.mozilla.org/en-US/docs/Tools
 # This is useful for viewing on non-standard screens
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-# Here we are using a Content-Distribution-Network (CDN) to get quick loading
+# Here I'm using a Content-Distribution-Network (CDN) to get quick loading
 # bootstrap, jQuery libraries. Note you need internet access to load these
 # (assuming they're not cached)
     <!-- Load jquery, bootstrap -->
@@ -221,13 +231,13 @@ $(document).ready(function() {
 
 `https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_web_server`
 
-We are using NodeJS runtime to create a simple web server
+I'm using NodeJS runtime to create a simple web server
 
 ### Web Application Framework (Web Application, API)
 
 * This is the Backend.
 
-We are using ExpressJS framework for our API and routing: https://expressjs.com/en/starter/hello-world.html
+I'm using ExpressJS framework for our API and routing: https://expressjs.com/en/starter/hello-world.html
 
 An Application Programming Interface (API) is essentially just an interface, I'm using to serve our set of routes for the client browser JavaScript to interact using HTTP protocol to access Backend functionality.
 
