@@ -1,7 +1,7 @@
 # SVG_Parser
-This project implements a basic SVG parser useing libxml2 library.SVG files are parsed and converted into well-formatted humanly readable strings.
-
-This program uses a LinkedListAPI to store various vector image components.
+- A program that uses libxml2 library to parse SVG files and converts into well-formatted humanly readable strings. 
+- Implementing a dynamic frontend with jQuery that allows the user to log into a MySQL database and store information related to the SVG files. (MySQL part is under progress) 
+- Integrating the full C backend with Node.js through the ffi-napi library.
 
 
 ## Installation of Node App
