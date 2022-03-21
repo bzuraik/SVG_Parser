@@ -92,7 +92,7 @@ https://developer.mozilla.org/en-US/docs/Tools
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-# Here we're loading our custom Style
+# Here I'm loading our custom Style
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="/style.css">
     <!-- Custom CSS End -->
@@ -179,7 +179,7 @@ input[type=submit], button {
 How to $.ajax: https://stackoverflow.com/a/22964077/5698848
 
 ```JavaScript
-// We're using jQuery library
+// I'm using jQuery library
 // document.ready just means this JS runs when the document element (body) is loaded
 // Put all onload AJAX calls here, and event listeners
 $(document).ready(function() {
@@ -225,13 +225,13 @@ We are using NodeJS runtime to create a simple web server
 
 ### Web Application Framework (Web Application, API)
 
-* This is the Backend, users cannot see this code
+* This is the Backend.
 
 We are using ExpressJS framework for our API and routing: https://expressjs.com/en/starter/hello-world.html
 
-An Application Programming Interface (API) is essentially just an interface, we're using to serve our set of routes for the client browser JavaScript to interact using HTTP protocol to access Backend functionality.
+An Application Programming Interface (API) is essentially just an interface, I'm using to serve our set of routes for the client browser JavaScript to interact using HTTP protocol to access Backend functionality.
 
-We're creating a RESTful API: https://restfulapi.net/
+I'm creating a RESTful API: https://restfulapi.net/
 
 HTTP Methods to consider:
 
@@ -288,7 +288,7 @@ req.params['userId'] = "34"
 Response is what we send back to the client after they make an AJAX call
 
 ```JavaScript
-// We're sending back the same JSON object that we recieved
+// I'm sending back the same JSON object that we recieved
 res.send({
   userId: "34",
   bookId: "8989"
@@ -313,7 +313,7 @@ The stub provides `app.get()` and `app.port()` routes for handling .vcf file upl
 'use strict'
 
 // This gives us direct access to C functions from our library
-// Not needed in Module 1
+
 const ffi = require('ffi-napi');
 
 // Express App library
@@ -324,7 +324,7 @@ const app     = express();
 const path    = require("path");
 
 // File Upload library
-// Not needed in module 1
+
 const fileUpload = require('express-fileupload');
 app.use(fileUpload());
 
@@ -337,35 +337,7 @@ const fs = require('fs');
 const JavaScriptObfuscator = require('javascript-obfuscator');
 ```
 
-### Package.json and Lock file
 
-* You don't need to touch these files or add any external libraries, I've added the only ones you need
-* Most popular programming languages have some package management system, PHP has Composer, Ruby has RubyGems, Python has Pip...
-* Our package manager allows us to install libraries by simply typing `npm install PACKAGE_NAME --save` and then `npm install` to fetch the latest version
-* The packages are installed to `node_modules/` due to the essence of a package manager, we don't need to include `node_modules/` in source control, because anyone can type `npm install`
 
-## How does everything work together?
 
-1. Install the dependencies (only need to do this once) and spin up our node server
-    * Note: We're using "nodemon" (instead of say `node run dev`) because it hot-reloads app.js whenever it's changed
-
-2. View at http://localhost:PORT
-
-3. The HTML is loaded when you visit the page and see forms, tables, content
-
-4. The CSS is also loaded, and you'll see the page has style 
-
-5. The JavaScript file is loaded (index.js) and will run a bunch of "on load" AJAX calls to populate dropdowns, change elements
-
-6. When buttons are clicked, more AJAX calls are made to the backend, that recieve a response update the HTML
-
-7. An AJAX call is made from your browser, it makes an HTTP (GET, POST...) call to our web server
-
-8. The app.js web server receives the request with the route, and request data (JSON, url parameters, files...)
-
-9. Express looks for the route you defined, then runs the callback function you provided
-
-10. Our callback function (for this module) should just return a hard coded JSON response
-
-11. The AJAX call gets a response back from our server (either a 200 OK or maybe an error like a 404 not found) and either calls the "success" callback function or the "fail" function. If the success is called, "data" contains the returned JSON, and we can use it to update elements, e.g.`$('#elementId').html('<div>' + data["somekey"] + '</div>');` where there is a "div" somewhere with the "id" "elementId".
 
