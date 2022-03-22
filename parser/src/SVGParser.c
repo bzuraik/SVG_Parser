@@ -2745,6 +2745,6 @@ char *scaleShape(char *filename,char *schemafile, char *elemType, int elementInd
 		freeList(list);
 	}
 
-deleteSVG(svg);
-return "yes";
+	deleteSVG(svg);
+	return "yes";
 }
