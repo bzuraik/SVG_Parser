@@ -16,33 +16,25 @@ char floats[50];
 char units[10];
 int storeUnits(char * cont)
 {
-
     int j = 0;
     int unitExist = 0;
     for (int i =0; i < strlen(cont); i++)
-        {
-            
-           if( (cont[i] >= '0' && cont[i] <= '9') && (!( cont[i+1] >= '0' && cont[i+1] <= '9') && cont[i+1] != '.'))
-           {
-                
-                
+        { 
+           if((cont[i] >= '0' && cont[i] <= '9') && (!( cont[i+1] >= '0' && cont[i+1] <= '9') && cont[i+1] != '.'))
+           {   
                for(int x = 0; x <= i; x++)
-               {
-                   
-                   floats[x] = cont[x];
-                   
+               {   
+                   floats[x] = cont[x];     
                }
                for(int x = i+1; x < strlen(cont); x++)
-               {
-                   
+               {     
                    unitExist++;
                    units[j] = cont[x];
                    j++;
-               }
-               
+               }   
            }
-        }
-        
+        } 
+
         units[strlen(units)] = '\0';
 
     return unitExist;  
@@ -56,6 +48,7 @@ Attribute * createAttribute(char* size)
     return structPtr;
 }
 
+// Function that mallocates a struct of rectangle
 Rectangle * createRect(char* size)
 {
 
@@ -64,6 +57,7 @@ Rectangle * createRect(char* size)
     return structPtr;
 }
 
+// Function that mallocates a struct of Circle
 Circle * createCirc(char* size)
 {
 
@@ -72,21 +66,25 @@ Circle * createCirc(char* size)
     return structPtr;
 }
 
+// Function that mallocates a struct of path
 Path * createPath(char* size)
 {
     
-    Path* structPtr = malloc(sizeof(Path) + sizeof(char) *1000000);
+    Path* structPtr = malloc(sizeof(Path) + sizeof(char) *10000);
 
     return structPtr;
 }
+
+// Function that initilizes the the rectangles attriubtes to 0s.
 void initRect(Rectangle *rect)
 {
     rect->x = 0.0;
     rect->y = 0.0;
     rect->height = 0.0;
     rect->width = 0.0;
-    strcpy(rect->units, "");
 }
+
+// Function that sets width and height of a rectangle to 0 if they are less than 0. 
 void checkRect(Rectangle *rect)
 {
     if(rect->width < 0)
@@ -99,17 +97,14 @@ void checkRect(Rectangle *rect)
     }
 
 }
+// function that stores the parsed data and stores it into to a Rectangle struct.
 void storeRect(char *cont, char *attrName, Rectangle *rect, SVG* svg)
 {
     int memLen;
-    
-    
     if(strcmp(attrName, "x") == 0)
     {
-        
-        
         int unitsCheck = storeUnits(cont);
-        
+
         if(unitsCheck > 0)
         {
            
@@ -121,86 +116,61 @@ void storeRect(char *cont, char *attrName, Rectangle *rect, SVG* svg)
         }
         else
         {
-            
             rect->x = atof(cont);
             #pragma GCC diagnostic push
             #pragma GCC diagnostic ignored "-Wstringop-truncation"
                 strncpy(rect->units, " ", 0);
-            #pragma GCC diagnostic pop
-            
-            
-        }
-         
-                     
+            #pragma GCC diagnostic pop     
+        }                 
     }
     else if(strcmp(attrName, "y") == 0)
     {
-        
         int unitsCheck = storeUnits(cont);
-        
         if(unitsCheck > 0)
         {
-            
             rect->y = atof(floats);
             int length  = strlen(units) + 1;
             strncpy(rect->units, units, length);
-            memset(floats, 0, 50);
-            
+            memset(floats, 0, 50);   
         }
         else
-        {
-            
+        { 
             rect->y = atof(cont);
-            strncpy(rect->units, "", 1);
-            
+            strncpy(rect->units, "", 1); 
         }
-        
     }
     else if(strcmp(attrName, "width") == 0)
     {
-        
         int unitsCheck = storeUnits(cont);
         
         if(unitsCheck > 0)
         {
-            
             rect->width = atof(floats);
             int length  = strlen(units) + 1;
             strncpy(rect->units, units, length);
-            memset(floats, 0, 50);
-            
+            memset(floats, 0, 50);    
         }
         else
-        {
-            
+        { 
             rect->width = atof(cont);
             strncpy(rect->units, "", 1);
         }
-        
     }
     else if(strcmp(attrName, "height") == 0)
     {
-        
         int unitsCheck = storeUnits(cont);
-        
         if(unitsCheck > 0)
         {
-            
             rect->height = atof(floats);
             int length  = strlen(units) + 1;
             strncpy(rect->units, units, length);
-            memset(floats, 0, 50);
-            
+            memset(floats, 0, 50);  
         }
         else
         {
-            
             rect->height = atof(cont);
-            strncpy(rect->units, "", 1);
-            // free(floats);
-        }
-        //   printf(" X = %d Y = atof(cont)%d, width = %d, Height =%d RECT = %d\n", xFlag, yFlag, widthFlag, heightFlag, rectFlag );
-        
+            strncpy(rect->units, "", 1);   
+        }   
     }
     else
     {
@@ -211,11 +181,7 @@ void storeRect(char *cont, char *attrName, Rectangle *rect, SVG* svg)
         strcpy(structAtt2->value, cont);
         
         insertBack(rect->otherAttributes, (void*)structAtt2);
-        
     }
-
-    
-
 }
 
 void initCirc(Circle *circ)
@@ -231,17 +197,14 @@ void checkCirc(Circle *circ)
         circ->cy = 0.0;
     }
 }
+
+// function that stores the parsed data and stores it into to a Circle struct.
 void storeCirc(char *cont, char *attrName, Circle *circ, SVG* svg)
 {
     int memLen;
-    
-    
     if(strcmp(attrName, "cx") == 0)
     {
-        
-        
         int unitsCheck = storeUnits(cont);
-        
         if(unitsCheck > 0)
         {
             circ->cx = atof(floats);
@@ -250,46 +213,33 @@ void storeCirc(char *cont, char *attrName, Circle *circ, SVG* svg)
             
         }
         else
-        {
-           
+        {  
             circ->cx = atof(cont);
-            strncpy(circ->units, "", 1);
-            
-        }
-         
-                     
+            strncpy(circ->units, "", 1);     
+        }                      
     }
     else if(strcmp(attrName, "cy") == 0)
-    {
-        
-        int unitsCheck = storeUnits(cont);
-        
+    { 
+        int unitsCheck = storeUnits(cont); 
         if(unitsCheck > 0)
         {
-            
             circ->cy = atof(floats);
             int length  = strlen(units) + 1;
             strncpy(circ->units, units, length);
-            memset(floats, 0, 50);
-            
+            memset(floats, 0, 50); 
         }
         else
         {
-           
             circ->cy  = atof(cont);
-            strncpy(circ->units, "", 1);
-            
+            strncpy(circ->units, "", 1); 
         }
         
     }
     else if(strcmp(attrName, "r") == 0)
     {
-        
         int unitsCheck = storeUnits(cont);
-        
         if(unitsCheck > 0)
-        {
-            
+        { 
             circ->r = atof(floats);
             int length  = strlen(units) + 1;
             strncpy(circ->units, units, length);
@@ -297,12 +247,10 @@ void storeCirc(char *cont, char *attrName, Circle *circ, SVG* svg)
             
         }
         else
-        {
-            
+        { 
             circ->r = atof(cont);
             strncpy(circ->units, "", 1);
         }
-        
     }
     else
     {
@@ -315,27 +263,21 @@ void storeCirc(char *cont, char *attrName, Circle *circ, SVG* svg)
         insertBack(circ->otherAttributes, (void*)structAtt2);
         
     }
-
-    
-
 }
 void initPath(Path *path)
 {
     strcpy(path->data, " ");
    
 }
+
+// function that stores the parsed data and stores it into to a Path struct.
 void storePath(char *cont, char *attrName, Path *path, SVG* svg)
 {
     int memLen;
-    
-    
     if(strcmp(attrName, "d") == 0)
     {
-
             int length  = strlen(cont)+1; 
-            strncpy(path->data, cont, length);
-            
-                     
+            strncpy(path->data, cont, length);                
     }
     else
     {
@@ -345,12 +287,11 @@ void storePath(char *cont, char *attrName, Path *path, SVG* svg)
         strcpy(structAtt2->name, attrName);
         strcpy(structAtt2->value, cont);
         
-        insertBack(path->otherAttributes, (void*)structAtt2);
-        
+        insertBack(path->otherAttributes, (void*)structAtt2);   
     }
-
 }
 
+// function that stores the parsed data and stores it into to a group struct.
 void storeGroup(char *cont, char *attrName, Group *group, SVG* svg)
 {
         int memLen;
@@ -367,20 +308,18 @@ void storeGroup(char *cont, char *attrName, Group *group, SVG* svg)
 void findGroup(xmlNode * a_node, SVG* svg, Group *group)
 {
     xmlNode *cur_node = NULL;
+    // Iterate through every attribute of the current node in a group
     for (cur_node = a_node; cur_node != NULL; cur_node = cur_node->next)
     {
-
         if (cur_node->type == XML_ELEMENT_NODE)
         {
             
-           
             // printf("Group Node type: Element, \nname: %s\n", cur_node->name);
 
              if(strcmp((char*)cur_node->name, "rect") == 0)
             {
-                
-                
                 Rectangle* rect = (Rectangle*)malloc(sizeof(Rectangle));
+                initRect(rect);
                 rect->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &compareAttributes);
                 xmlAttr *attr;
                 for (attr = cur_node->properties; attr != NULL; attr = attr->next)
@@ -392,14 +331,13 @@ void findGroup(xmlNode * a_node, SVG* svg, Group *group)
                     storeRect(cont, attrName, rect, svg);
 
                 }
-                // checkRect(rect);
+                checkRect(rect);
                 insertBack(group->rectangles, (void*)rect);
             }
             if(strcmp((char*)cur_node->name, "circle") == 0)
             {
-                
-                
                 Circle* circ = (Circle*)malloc(sizeof(Circle));
+                initCirc(circ);
                 circ->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &compareAttributes);
                 xmlAttr *attr;
                 for (attr = cur_node->properties; attr != NULL; attr = attr->next)
@@ -411,13 +349,11 @@ void findGroup(xmlNode * a_node, SVG* svg, Group *group)
                     storeCirc(cont, attrName, circ, svg);
 
                 }
-                // checkCirc(circ);
+                checkCirc(circ);
                 insertBack(group->circles, (void*)circ);
             }
             else if(strcmp((char*)cur_node->name, "path") == 0)
             {
-                
-               
                 char *size = "path";
                 Path* path = createPath(size);
                 initPath(path);
@@ -430,13 +366,12 @@ void findGroup(xmlNode * a_node, SVG* svg, Group *group)
                     char *cont = (char *)(value->content);
                     
                     storePath(cont, attrName, path, svg);
-
                 }
                 insertBack(group->paths, (void*)path);
             }
             else if(strcmp((char*)cur_node->name, "g") == 0)
             {
-                
+                printf("group\n");
                 Group* group1 = (Group*)malloc(sizeof(Group));
                 group1->groups = initializeList(&groupToString, &deleteGroup, &compareGroups);
                 group1->rectangles = initializeList(&rectangleToString, &deleteRectangle, &compareRectangles);
@@ -444,31 +379,20 @@ void findGroup(xmlNode * a_node, SVG* svg, Group *group)
                 group1->paths = initializeList(&pathToString, &deletePath, &comparePaths);
                 group1->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &compareAttributes);
                 findGroup(cur_node->children, svg, group1);
-                xmlAttr *attr;
-                for (attr = cur_node->properties; attr != NULL; attr = attr->next)
-                {
-                     xmlNode *value = attr->children;
-                    char *attrName = (char *)attr->name;
-                    char *cont = (char *)(value->content);
-                    storeGroup(cont, attrName, group1, svg);
-
-                }
+                printf("REACHED\n");
+                printf("LENTH %d\n", getLength(group1->groups));
                 insertBack(group->groups, (void*)group1);
                 cur_node = cur_node->next;
                 
                 
             }  
         }
-        // findGroup(cur_node->children, svg, group);
+        findGroup(cur_node->children, svg, group);
     }
-
 }
 SVG* print_element_names(xmlNode * a_node, SVG* svg)
 {
     xmlNode *cur_node = NULL;
-    
-
-    // printf("NYAHH EH \n %s\n", a_node->ns->href);
     for (cur_node = a_node; cur_node != NULL; cur_node = cur_node->next) {
         if (cur_node->type == XML_ELEMENT_NODE) {
 
@@ -485,10 +409,8 @@ SVG* print_element_names(xmlNode * a_node, SVG* svg)
                 strcpy(svg->description, (char*)cur_node->children->content);
             }
             
-
              if(strcmp((char*)cur_node->name, "rect") == 0 )
             {
-                
                 Rectangle* rect = (Rectangle*)malloc(sizeof(Rectangle));
                 initRect(rect);
                 rect->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &compareAttributes);
@@ -500,14 +422,12 @@ SVG* print_element_names(xmlNode * a_node, SVG* svg)
                     char *cont = (char *)(value->content);
                     
                     storeRect(cont, attrName, rect, svg);
-
                 }
-                // checkRect(rect);
+                checkRect(rect);
                 insertBack(svg->rectangles, (void*)rect);    
             }
             else if(strcmp((char*)cur_node->name, "circle") == 0 )
             {
-                // printf("Parent%s\n", (char*)a_node);
                 Circle* circ = (Circle*)malloc(sizeof(Circle));
                 initCirc(circ);
                 circ->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &compareAttributes);
@@ -519,9 +439,8 @@ SVG* print_element_names(xmlNode * a_node, SVG* svg)
                     char *cont = (char *)(value->content);
                     
                     storeCirc(cont, attrName, circ, svg);
-
                 }
-                // checkCirc(circ);
+                checkCirc(circ);
                 insertBack(svg->circles, (void*)circ);    
             }
             else if(strcmp((char*)cur_node->name, "path") == 0)
@@ -543,14 +462,12 @@ SVG* print_element_names(xmlNode * a_node, SVG* svg)
             }
             else if(strcmp((char*)cur_node->name, "g") == 0)
             {
-            
-                
                 Group* group = (Group*)malloc(sizeof(Group));
                 group->rectangles = initializeList(&rectangleToString, &deleteRectangle, &compareRectangles);
                 group->circles = initializeList(&circleToString, &deleteCircle, &compareCircles);
                 group->paths = initializeList(&pathToString, &deletePath, &comparePaths);
-                group->groups = initializeList(&groupToString, &deleteGroup, &compareGroups);
                 group->otherAttributes = initializeList(&attributeToString, &deleteAttribute, &compareAttributes);
+                group->groups = initializeList(&groupToString, &deleteGroup, &compareGroups);
                 findGroup(cur_node->children, svg, group);
                 xmlAttr *attr;
                 for (attr = cur_node->properties; attr != NULL; attr = attr->next)
@@ -562,8 +479,7 @@ SVG* print_element_names(xmlNode * a_node, SVG* svg)
 
                 }
                 insertBack(svg->groups, (void*)group);
-                cur_node = cur_node->next;
-                
+                cur_node = cur_node->next;    
             }
         
         }
@@ -601,7 +517,5 @@ SVG* print_element_names(xmlNode * a_node, SVG* svg)
         }  
         print_element_names(cur_node->children, svg);
     }
-
     return svg;
-
 }
