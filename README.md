@@ -26,11 +26,20 @@ https://user-images.githubusercontent.com/95400232/159369822-9adfd1f3-bb2b-4c77-
 ### SVG View Panel
     - This panel shows components in the currently open file, one line per component.
     - Above the panel, there is a drop-down list of file names. The list will contain only valid SVG files.
-    
-Functionalities:
-- Upload SVG Files
 
-
+## Application Functionalites
+### Upload an SVG file
+### Download a file:
+    - This is done by clicking on the image thumbnail or file name in the File Log Panel
+### Create SVG
+### Add shape
+    - add a shape - a rectangle or a circle - to one of the files currently uploaded to the server.
+### Show attributes 
+    - The action is to display the additional properties for a specific component - e.g. fill, stroke, etc..
+### Edit attribute
+    - Modify the value of an existing attribute, or add a new attribute.
+### Edit title / description
+    - This action will allow users to be able to edit the tile and description of aa specifc SVG File.
 
 ## Installation of Node App
 
