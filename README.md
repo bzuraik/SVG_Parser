@@ -33,7 +33,7 @@ https://user-images.githubusercontent.com/95400232/159369822-9adfd1f3-bb2b-4c77-
     - This is done by clicking on the image thumbnail or file name in the File Log Panel
 ### Create SVG
 ### Add shape
-    - add a shape - a rectangle or a circle - to one of the files currently uploaded to the server.
+    -  Adding a rectangle or a circle to one of the files currently uploaded to the server.
 ### Show attributes 
     - The action is to display the additional properties for a specific component - e.g. fill, stroke, etc..
 ### Edit attribute
