@@ -10,7 +10,25 @@
 
 https://user-images.githubusercontent.com/95400232/159369822-9adfd1f3-bb2b-4c77-bd55-441aa2f11857.mp4
 
-
+## UI breakdown
+### File Log Panel
+    - This panel displays the list of all valid SVG files on the server, including all the files uploaded from client and the all
+      files created from scratch by the client.
+    - The panel contains a link to the downloadable SVG file, and a summary of that file’s properties:
+        • Image thumbnail (clickable download). 
+        • File name (clickable download)
+        • File size.
+        • Total number of rectangles
+        • Total number of circles
+        • Total number of paths
+        • Total number of groups
+        
+### SVG View Panel
+    - This panel shows components in the currently open file, one line per component.
+    - Above the panel, there is a drop-down list of file names. The list will contain only valid SVG files.
+    
+Functionalities:
+- Upload SVG Files
 
 
 
