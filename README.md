@@ -81,7 +81,7 @@ parser/
 
 #### Browser JavaScript
 
-How to $.ajax: https://stackoverflow.com/a/22964077/5698848
+https://stackoverflow.com/a/22964077/5698848
 
 ```JavaScript
 // I'm using jQuery library
