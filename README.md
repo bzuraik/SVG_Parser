@@ -11,7 +11,7 @@
 https://user-images.githubusercontent.com/95400232/159369822-9adfd1f3-bb2b-4c77-bd55-441aa2f11857.mp4
 
 ## UI breakdown
-### -File Log Panel
+### File Log Panel
     - This panel displays the list of all valid SVG files on the server, including all the files uploaded from client and the all
       files created from scratch by the client.
     - The panel contains a link to the downloadable SVG file, and a summary of that file’s properties:
@@ -28,18 +28,18 @@ https://user-images.githubusercontent.com/95400232/159369822-9adfd1f3-bb2b-4c77-
     - Above the panel, there is a drop-down list of file names. The list will contain only valid SVG files.
 
 ## Application Functionalites
-### Upload an SVG file
-### Download a file:
-    - This is done by clicking on the image thumbnail or file name in the File Log Panel
-### Create SVG
-### Add shape
-    -  Adding a rectangle or a circle to one of the files currently uploaded to the server.
-### Show attributes 
-    - The action is to display the additional properties for a specific component - e.g. fill, stroke, etc..
-### Edit attribute
-    - Modify the value of an existing attribute, or add a new attribute.
-### Edit title / description
-    - This action will allow users to be able to edit the tile and description of aa specifc SVG File.
+### - Upload an SVG file
+### - Download a file:
+    This is done by clicking on the image thumbnail or file name in the File Log Panel
+### - Create SVG
+### - Add shape
+    Adding a rectangle or a circle to one of the files currently uploaded to the server.
+### - Show Attributes
+    The action is to display the additional properties for a specific component - e.g. fill, stroke, etc..
+### - Show Attributes
+    Modify the value of an existing attribute, or add a new attribute.
+### - Edit title / description
+    This action will allow users to be able to edit the tile and description of aa specifc SVG File.
 
 ## Installation of Node App
 
