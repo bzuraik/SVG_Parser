@@ -11,7 +11,7 @@
 https://user-images.githubusercontent.com/95400232/159369822-9adfd1f3-bb2b-4c77-bd55-441aa2f11857.mp4
 
 ## UI breakdown
-### File Log Panel
+### -File Log Panel
     - This panel displays the list of all valid SVG files on the server, including all the files uploaded from client and the all
       files created from scratch by the client.
     - The panel contains a link to the downloadable SVG file, and a summary of that file’s properties:
