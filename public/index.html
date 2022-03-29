@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CHANGE ME</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="CHANGE ME">
+    <meta name="keywords" content="CHANGE ME">
+    <meta name="author" content="CHANGE ME">
+    <!-- Load jquery, bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    
+    <!-- Custom CSS End -->
+</head>
+<body>
+    <h3>File Log Panel</h3>
+    <hr>
+    <section class="Pview" id="Pview">        
+            <table class="tg" id="table">
+              <thead>
+                <tr>
+                  <th class="Primary"><span style="font-weight:bold">images </span></th>
+                  <th class="Primary"><span style="font-weight:bold">FileName (click to download) </span></th>
+                  <th class="Primary"><span style="font-weight:bold">File size </span></th>
+                  <th class="Primary"><span style="font-weight:bold">Number of rectangles </span></th>
+                  <th class="Primary"><span style="font-weight:bold">Number of circles </span></th>
+                  <th class="Primary"><span style="font-weight:bold">Number of paths </span></th>
+                  <th class="Primary"><span style="font-weight:bold">Number of groups </span></th>
+                </tr>
+              </thead>
+                <tbody class = "cont" id="cont">
+                  <tr id="add-row">
+                    
+                  </tr>
+                </tbody>
+            </table>
+    </section>
+    
+    <br>
+    
+    <form ref='uploadForm'
+		id='uploadForm'
+      action='/upload'
+      method='post'
+      encType="multipart/form-data">
+      <div class="form-group">
+      	<input type="file" name="uploadFile" class="btn btn-secondary">
+      	<input id = "test" type='submit' value='Upload' class="btn btn-secondary">
+      </div>
+   </form>
+    <br>
+
+    
+
+
+    <h3 id="SVGPanel">SVG View Panel</h3>
+    <form id="myForm">
+      <select id="selectNumber">
+        <option>SVG FILES</option>
+      </select>
+    </form>
+   
+    <section class="SVGview" id="SVGview"> 
+      <table class="tg2" id = "tg2">
+        <tr>
+          <td id= "bigImageBox" colspan="3">&nbsp; <img id="bigImage" alt="Image"></td>
+        </tr>
+        <tr>
+          <th class="Primary">&nbsp; Title </td>
+          <th class="Primary" colspan="2">&nbsp; Description </td> 
+        </tr>
+        <tr>
+          <td class="title"></td>
+          <td class="desc" colspan="2">&nbsp;</td>
+        </tr>
+        <tr id="tabl2">
+          <th class="Primary" >&nbsp;Component</td>
+          <th class="Primary">&nbsp;Summary</td>
+          <th class="Primary">&nbsp;Other Attributes </td>
+        </tr>
+        <tr>
+          <td id="rows">&nbsp; </td>
+          <td id="rows">&nbsp;</td>
+          <td id="rows">&nbsp; </td>
+        </tr>
+  
+      </table>
+    </section>
+    <br>
+    <br>
+    
+    <h1 style="text-align: center;">Functionalites</h1>
+    <br>
+    
+    <br>
+    <hr>
+    <div style="text-align: center;" id="EditORADD">
+      <h3>Would you like to edit a file or add a file?</h3>
+      <input Class= "Btn"id="Add" type="button" value="Add" name="Add" />
+      <input Class="Btn"id="Edit" type="button" value="Edit" name="Edit" />
+    </div>
+    <br>
+    <div style="text-align: center;" id="FileChose">
+   
+    <form id="myForm2"class="unselected-field" style="display: inline-block;" id="selectCountry">
+      <label>Choose a file to work on: <select id="selectNumber2">
+          <option>SVG Files:</option>
+          </select>
+      </label>
+      <br>
+      <input class="Btn" id="Confirm" type="button" value="Confirm" name="Confirm" />
+      <input class="Btn" id="Back1" type="button" value="Back" name="Back1" />
+    </form>
+    </div>
+
+    <div style="text-align: center;" id="scaleORadd">
+      <input class="Btn" id="Scale" type="button" value="Scale" name="Scale" />
+      <input class="Btn" id="AddShape" type="button" value="Add" name="Add"/>
+      <input class="Btn" id="title-desc" type="button" value="title-desc" name="title-desc"/>
+      <br>
+      <input class="Btn" id="Back2" type="button" value="Back" name="Back2" />
+
+    
+    </div>
+      <div style="text-align: center;" id="editTitle-desc">
+        <label for="title">Title </label><br>
+        <input id ="titleEdit"type="text" name="titleEdit" value="title"><br>
+        
+        <label for="desc">Description </label><br>
+        <input id ="descEdit"type="text" name="desceEdit" value="Description"><br>
+        <br>
+        <input class="Btn" id="SubmitTD" type="button" value="Submit" name="SubmitTD" />
+        <input class="Btn" id="Back6" type="button" value="Back" name="Back6" />
+        
+      </div>
+    <div id="AddSh">
+      <div id="RectToFile">
+        <h5 >Rectanlge</h5>
+        <label for="x">x</label>
+        <input id ="x"type="text" name="x" >
+        
+        <label for="y">y</label>
+        <input id ="y"type="text" name="y" >
+        
+        <label for="Width">Add Description </label>
+        <input id ="Width"type="text" name="Width" >
+        
+  
+        <label for="height">Height </label>
+        <input id ="height"type="text" name="height" >
+  
+        <label for="Name">Name of Attribute</label>
+        <input id ="NameR"type="text" name="NameR" >
+  
+        <label for="Value">Value of Attribute</label>
+        <input id ="ValueR"type="text" name="ValueR" >
+        <br><br>
+        <input class="Btn" id="AddRect" type="button" value="Add" name="AddRect" />
+      </div>
+      <div  id="CircToFile">
+        <h5 >Circle</h5>
+        <label for="cx">cx</label>
+        <input id ="cx"type="text" name="cx">
+        
+        
+        <label for="cy">cy</label>
+        <input id ="cy"type="text" name="cy" >
+        
+        <label for="r">r </label>
+        <input id ="r"type="text" name="r" >
+  
+        <label for="Name">Name of Attribute</label>
+        <input id ="Name"type="text" name="Name" >
+  
+        <label for="Value">Value of Attribute</label>
+        <input id ="Value"type="text" name="Value" >
+        
+        <br><br>
+        <input class="Btn" id="AddCric" type="button" value="Add" name="AddCirc" />
+        
+  
+      </div>
+      <div  id="pathToFile">
+        <h5 >Paths</h5>
+        <label for="data">cx</label>
+        <input id ="d"type="text" name="d">
+        <label for="Name">Name of Attribute</label>
+        <input id ="Name"type="text" name="Name" >
+  
+        <label for="Value">Value of Attribute</label>
+        <input id ="Value"type="text" name="Value" >
+        <br><br>
+        <input class="Btn" id="AddPath" type="button" value="Add" name="AddPath" />
+        
+  
+      </div>
+      <div>
+        <input class="Btn" id="Back5" type="button" value="Back" name="Back5" />
+      </div>
+      
+    </div>
+
+    <div style="text-align: center;" id="scaleORadd">
+      
+
+
+    </div>
+
+    <div style="text-align: center;"  id="ScaleOption">
+      <input class="radio" id="Rect" type="radio" name="option" value="rect"> Rectangle<br>
+      <input class="radio"id="Circ" type="radio" name="option" value="circ"> Circle<br>
+    
+    <br>
+    <br>
+    <div id="scaling">
+      <form action="/action_page.php">
+        <label for="scale">Scale by a factor of: </label><br>
+        <input id ="factor"type="text" id="scale" name="factor" value="Scale"><br>
+        <br>
+        <input class="Btn" id="ConfirmScale" type="button" value="Confirm" name="ConfirmScale" />
+      </form> 
+    </div>
+    <input class="Btn" id="Back3" type="button" value="Back" name="Back3" />
+  </div>
+  <div >
+    <input class="Btn" id="Back4" type="button" value="Back" name="Back4" />
+  </div>
+  <div style="text-align: center;" id="AddFile">
+
+    <div style="text-align: center;" id="TandD">
+      
+    
+    <label for="title">Add Title </label><br>
+    <input id ="titleAdd"type="text" name="titleAdd" value="title"><br>
+    
+    <label for="desc">Add Description </label><br>
+    <input id ="descAdd"type="text" name="desceAdd" value="Description"><br>
+    <br>
+  
+
+  <div  id="ShapesAdd">
+
+  
+    
+    <div id="RectToFile">
+      <h5 >Rectanlge</h5>
+      <label for="x">x</label>
+      <input id ="x"type="text" name="x" >
+      
+      <label for="y">y</label>
+      <input id ="y"type="text" name="y" >
+      
+      <label for="Width">Add Description </label>
+      <input id ="Width"type="text" name="Width" >
+      
+
+      <label for="height">Height </label>
+      <input id ="height"type="text" name="height" >
+
+      <label for="Name">Name of Attribute</label>
+      <input id ="NameR"type="text" name="NameR" >
+
+      <label for="Value">Value of Attribute</label>
+      <input id ="ValueR"type="text" name="ValueR" >
+      <br><br>
+      <input class="Btn" id="AddRect" type="button" value="Add" name="AddRect" />
+    </div>
+    <div  id="CircToFile">
+      <h5 >Circle</h5>
+      <label for="cx">cx</label>
+      <input id ="cx"type="text" name="cx">
+      
+      
+      <label for="cy">cy</label>
+      <input id ="cy"type="text" name="cy" >
+      
+      <label for="r">r </label>
+      <input id ="r"type="text" name="r" >
+
+      <label for="Name">Name of Attribute</label>
+      <input id ="Name"type="text" name="Name" >
+
+      <label for="Value">Value of Attribute</label>
+      <input id ="Value"type="text" name="Value" >
+      
+      <br><br>
+      <input class="Btn" id="AddCric" type="button" value="Add" name="AddCirc" />
+      
+
+    </div>
+    <div  id="pathToFile">
+      <h5 >Paths</h5>
+      <label for="data">cx</label>
+      <input id ="d"type="text" name="d">
+      <label for="Name">Name of Attribute</label>
+      <input id ="Name"type="text" name="Name" >
+
+      <label for="Value">Value of Attribute</label>
+      <input id ="Value"type="text" name="Value" >
+      <br><br>
+      <input class="Btn" id="AddPath" type="button" value="Add" name="AddPath" />
+      
+
+    </div>
+    
+  </div>
+</div>
+    
+    <br>
+    
+
+
+  </div>
+
+
+  <br>
+  <br>
+  <br>
+  <br>
+
+
+
+    <!-- Leave me at the bottom of body -->
+    <script src="/index.js" type="text/javascript">
+      
+      
+      
+      
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
