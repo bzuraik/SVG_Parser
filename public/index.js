@@ -1,4 +1,4 @@
-// Put all onload AJAX calls here, and event listeners
+// all onload AJAX calls here, and event listeners
 jQuery(document).ready(function() {
     // On page-load AJAX Example
     // var input = $( "input" ).first().val();
@@ -6,18 +6,14 @@ jQuery(document).ready(function() {
     
     jQuery.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type - we will use JSON for almost everything 
-        url: '/endpoint1',   //The server endpoint we are connecting to
+        dataType: 'json',       //Data type - I'm using JSON for almost everything 
+        url: '/endpoint1',   //The server endpoint I'm connecting to
         data: {
             // data: filenameUploaded
             
         },
         success: function (data) {
-            /*  Do something with returned object
-                Note that what we get is an object, not a string, 
-                so we do not need to parse it on the server.
-                JavaScript really does handle JSONs seamlessly
-            */  $("#FileChose").hide();
+                $("#FileChose").hide();
                 $("#ScaleOption").hide();
                 $("#scaleORadd").hide();
                 $("#editTitle-desc").hide();
@@ -105,7 +101,6 @@ jQuery(document).ready(function() {
                 });
                 
             
-            // jQuery('#blah').html("On page load, received string " + data.somethingElse +"from server");
             var select = document.getElementById("selectNumber");
 
             for(var i = 0; i < data.somethingElse.length; i++) {
@@ -139,9 +134,7 @@ jQuery(document).ready(function() {
                 var cell5 = rows.insertCell(4);
                 var cell6 = rows.insertCell(5);
                 var cell7 = rows.insertCell(6);
-            // var cell1 = row.insertCell(0);
-            // var cell2 = row.insertCell(1);
-                // cell1.innerHTML = i+1;
+           
                 
                 cell1.setAttribute("class", "image"+[i]);//images
                 cell1.setAttribute("id", "image");
@@ -149,7 +142,7 @@ jQuery(document).ready(function() {
                 $(".image"+[i]).append(img);
 
 
-                // cell2.innerHTML = data.somethingElse[i];//filenames
+                
                 var img = "<a href='"+data.somethingElse[i]+"' download>"+data.somethingElse[i]+"</a>";
                 cell2.setAttribute("class", "filename"+[i]);
                 $(".filename"+[i]).append(img);
@@ -157,23 +150,14 @@ jQuery(document).ready(function() {
                 cell3.innerHTML = "1kb";//filesize
 
                 cell4.innerHTML = data.JSONString[i].numRect;//Rect
-                // cell4.setAttribute("class", "Rect");
                 
                 cell5.appendChild(document.createTextNode(data.JSONString[i].numCirc));//Circ
 
                 cell6.innerHTML = data.JSONString[i].numPaths;//Paths
 
                 cell7.innerHTML = data.JSONString[i].numGroups;//Group
-                // var el = document.createElement('img');
                 
-                // table.appendChild(el)   
-                
-            
-            }
-            
-            
-            //We write the object to the console to show that the request was successful
-            // console.log(data); 
+            } 
 
         },
         fail: function(error) {
@@ -183,8 +167,6 @@ jQuery(document).ready(function() {
         }
     });
 
-    // Event listener form example , we can use this instead explicitly listening for events
-    // No redirects if possible
     $('#myForm').change(function(e){
         
         // $('#rows5').remove();
@@ -192,7 +174,7 @@ jQuery(document).ready(function() {
         let id2 = $('#selectNumber2').val();
         var num;
         e.preventDefault();
-        //Pass data to the Ajax call, so it gets passed to the server
+        //Passing data to the Ajax call, so it gets passed to the server
         $.ajax({
             type: 'get',            //Request type
             dataType: 'json',       //Data type - we will use JSON for almost everything 
@@ -297,8 +279,7 @@ jQuery(document).ready(function() {
                 }
                 
                 // $('#filename').html(data1);
-                //We write the object to the console to show that the request was successful
-                // console.log(data); 
+                 
                 
             },
             fail: function(error) {
@@ -306,7 +287,7 @@ jQuery(document).ready(function() {
                 alert("On page load, received error from server");
                 console.log(error); 
             }
-            //Create an object for connecting to another waypoint
+            
         });
     });
 
@@ -320,7 +301,7 @@ jQuery(document).ready(function() {
         let value =  $('#factor').val();;
         
         e.preventDefault();
-        //Pass data to the Ajax call, so it gets passed to the server
+        //Passing data to the Ajax call, so it gets passed to the server
         $.ajax({
             type: 'get',            //Request type
             dataType: 'text',       //Data type - we will use JSON for almost everything 
@@ -344,7 +325,7 @@ jQuery(document).ready(function() {
                 window.alert("On page load, received error from server");
                 console.log(error); 
             }
-            //Create an object for connecting to another waypoint
+            
         });
     });
 
@@ -353,8 +334,5 @@ jQuery(document).ready(function() {
 
 
 
-// document.getElementById('test').addEventListener('click', function() {
-//     var singleValues = $( "#test" ).val();
-//     alert(singleValues);s
-// }, false);
+
 
