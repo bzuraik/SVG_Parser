@@ -85,25 +85,18 @@ https://stackoverflow.com/a/22964077/5698848
 
 ```JavaScript
 // I'm using jQuery library
-// document.ready just means this JS runs when the document element (body) is loaded
-// Put all onload AJAX calls here, and event listeners
+// Puting all onload AJAX calls here, and event listeners
 $(document).ready(function() {
 
-// This is an Asynchronous JavaScript Request (AJAX) using jQuery
-// We can use this to query our API endpoints
-    // On page-load AJAX Example
+    // On page-load AJAX
     $.ajax({
         type: 'get',            //Request type
-        dataType: 'json',       //Data type -  
+        dataType: 'json',       //Data type - I'm using JSON for almost everything 
         url: '/someendpoint',   //The server endpoint we are connecting to
         success: function (data) {
-            /*  Do something with returned object
-            Note that what we get is an object, not a string, 
-            so we do not need to parse it on the server.
-            JavaScript really does handle JSONs seamlessly
-            */
+            
             $('#blah').html("On page load, Received string '"+JSON.stringify(data)+"' from server");
-            //We write the object to the console to show that the request was successful
+            //I also write the object to the console to show that the request was successful
             console.log(data);  
         },
         fail: function(error) {
@@ -111,8 +104,6 @@ $(document).ready(function() {
             console.log(error); 
         }
     });
-// When you "submit" an HTML form, the default action is to redirect to another page
-// This overrides it and allows us to make an AJAX request and edit data on the page
     $('#someform').submit(function(e){
         $('#blah').html("Callback from the form");
         e.preventDefault();
