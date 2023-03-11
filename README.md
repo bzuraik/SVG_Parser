@@ -1,7 +1,7 @@
 # SVG_Parser
 - A full-stack CRUD application that parses SVG files through XML and displays various location properties
-- Implementing a dynamic frontend with jQuery that allows the user to log into a MySQL database and store information related to the SVG files. (MySQL part is under progress) 
-- Integrating the full C backend with Node.js through the ffi-napi library.
+- Implemented a dynamic frontend with jQuery that allows the user to log into a MySQL database and store information related to the SVG files. (MySQL part is under progress) 
+- Integrated the full C backend with Node.js through the ffi-napi library.
 
 
 
